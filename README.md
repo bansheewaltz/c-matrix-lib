@@ -21,7 +21,7 @@ The russian version of the task can be found in the repository.
 
 # Chapter I  
 
-![matrix](misc/eng/images/matrixx.png)
+![matrix](task/misc/eng/images/matrixx.png)
 
 Planet Earth, USA, Texas, Dallas County, 1703 Matthew Street, September 13, 2000.  
 
