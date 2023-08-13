@@ -2,7 +2,7 @@
 
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (A->columns != B->columns || A->rows != B->rows)
-    return RC_OPERATION_ERROR;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
   if (rc != RC_OK)
@@ -19,7 +19,7 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 
 int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (A->columns != B->columns || A->rows != B->rows)
-    return RC_OPERATION_ERROR;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
   if (rc != RC_OK)
@@ -50,7 +50,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (A->rows != B->columns)
-    return RC_OPERATION_ERROR;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = s21_create_matrix(B->rows, A->columns, result);
   if (rc != RC_OK)

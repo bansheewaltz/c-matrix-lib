@@ -3,8 +3,9 @@
 
 enum return_codes {
   RC_OK = 0,
-  RC_INTERNAL_ERROR = 1,
-  RC_OPERATION_ERROR = 2,
+  RC_MEMORY_ALLOCATION_ERROR = 1,
+  RC_INCORRECT_MATRIX_PARAMETERS = 1,
+  RC_CALCULATIONS_CANNOT_BE_PERFORMED = 2
 };
 
 typedef struct matrix_struct {

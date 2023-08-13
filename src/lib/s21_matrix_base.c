@@ -5,11 +5,11 @@
 
 int s21_create_matrix(int rows, int columns, matrix_t *result) {
   if (rows < 1 || columns < 1)
-    return RC_OPERATION_ERROR;
+    return RC_INCORRECT_MATRIX_PARAMETERS;
 
   result->matrix = calloc(columns, sizeof(double *));
   if (result->matrix == NULL)
-    return RC_INTERNAL_ERROR;
+    return RC_MEMORY_ALLOCATION_ERROR;
 
   int rc = RC_OK;
 
@@ -19,7 +19,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
   for (int i = 0; i < columns; i++) {
     result->matrix[i] = (double *)calloc(rows, sizeof(double));
     if (result->matrix[i] == NULL) {
-      rc = RC_INTERNAL_ERROR;
+      rc = RC_MEMORY_ALLOCATION_ERROR;
       break;
     }
   }

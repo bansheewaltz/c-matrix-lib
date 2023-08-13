@@ -16,7 +16,7 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (A->columns != A->rows)
-    return RC_OPERATION_ERROR;
+    return RC_CALCULATION_ERROR;
 
   int rc = s21_create_matrix(A->columns, A->rows, result);
   if (rc != RC_OK)
@@ -37,7 +37,7 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
 
 int s21_determinant(matrix_t *A, double *result) {
   if (A->columns != A->rows)
-    return RC_OPERATION_ERROR;
+    return RC_CALCULATION_ERROR;
 
   if (A->columns == 1) {
     *result = A->matrix[0][0];
