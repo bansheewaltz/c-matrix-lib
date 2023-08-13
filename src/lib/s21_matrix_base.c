@@ -28,10 +28,12 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
 }
 
 void s21_remove_matrix(matrix_t *A) {
-  if (A == NULL || A->matrix == NULL)
+  if (A == NULL)
     return;
-  for (int i = 0; i < A->columns; i++) {
-    free(A->matrix[i]);
+  if (A->matrix) {
+    for (int i = 0; i < A->columns; i++) {
+      free(A->matrix[i]);
+    }
   }
   free(A->matrix);
 }
