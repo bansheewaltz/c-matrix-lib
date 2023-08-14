@@ -38,7 +38,7 @@ bool s21_are_the_same_size(matrix_t *A, matrix_t *B) {
 }
 
 int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
-  if (A == NULL || result == NULL || A->matrix == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
   if (r < 0 || r >= A->rows || c < 0 || c >= A->columns)
     return RC_INCORRECT_MATRIX_PARAMETERS;
@@ -57,7 +57,7 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
 }
 
 int s21_calc_minors(matrix_t *A, matrix_t *result) {
-  if (A == NULL || result == NULL || A->matrix == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
 
   int rc = RC_OK;
