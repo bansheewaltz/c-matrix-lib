@@ -20,7 +20,7 @@ HeaderFilterRegex: >
   "(src/headers).*\\.h$"
 CheckOptions:
   - key:   readability-identifier-length.IgnoredParameterNames
-    value:   'i|j|k|a|b|n|v|p|A|B'
+    value:   'i|j|k|a|b|n|v|p|r|c|A|B'
   - key:   readability-identifier-length.IgnoredVariableNames
     value:   'c|rc'
   - key:   google-readability-braces-around-statements.ShortStatementLines
