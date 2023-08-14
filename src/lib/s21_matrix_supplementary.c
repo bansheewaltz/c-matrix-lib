@@ -13,6 +13,22 @@ bool s21_is_square(matrix_t *A) {
   return true;
 }
 
+bool s21_is_diagonal(matrix_t *A) {
+  if (A == NULL || A->matrix == NULL)
+    return false;
+  if (!s21_is_square(A))
+    return false;
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < A->rows; j++) {
+      if (i == j)
+        continue;
+      if (A->matrix[i][j] != 0)
+        return false;
+    }
+  }
+  return true;
+}
+
 bool s21_are_the_same_size(matrix_t *A, matrix_t *B) {
   if (A == NULL || B == NULL)
     return false;
