@@ -8,9 +8,17 @@
 bool s21_is_square(matrix_t *A) {
   if (A == NULL)
     return false;
-  if (A->columns == A->rows)
-    return true;
-  return false;
+  if (A->columns != A->rows)
+    return false;
+  return true;
+}
+
+bool s21_are_the_same_size(matrix_t *A, matrix_t *B) {
+  if (A == NULL || B == NULL)
+    return false;
+  if (A->rows != B->rows || A->columns != B->columns)
+    return false;
+  return true;
 }
 
 int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
@@ -32,7 +40,6 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
   return RC_OK;
 }
 
-// Compute the minors matrix, a matrix of determinants of submatrices.
 int s21_calc_minors(matrix_t *A, matrix_t *result) {
   if (A == NULL || result == NULL || A->matrix == NULL)
     return RC_NULL_POINTER_INPUT;
