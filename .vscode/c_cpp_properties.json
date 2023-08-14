@@ -2,7 +2,7 @@
     "env": {
         "projectIncludePath": [
             "${workspaceFolder}/src/include",
-            // "${workspaceFolder}/src/lib/headers",
+            "${workspaceFolder}/src/lib/headers",
             // "${workspaceFolder}/src/test/headers"
         ],
         "macDefaultIncludes": [
