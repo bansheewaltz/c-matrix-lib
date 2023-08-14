@@ -2,6 +2,8 @@
 #include "s21_matrix_supplementary.h"
 
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+  if (!A || !A->matrix || !B || !B->matrix || !result)
+    return RC_NULL_POINTER_INPUT;
   if (!s21_are_the_same_size(A, B))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
@@ -19,6 +21,8 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 }
 
 int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+  if (!A || !A->matrix || !B || !B->matrix || !result)
+    return RC_NULL_POINTER_INPUT;
   if (!s21_are_the_same_size(A, B))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
@@ -36,6 +40,8 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 }
 
 int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
+  if (!A || !A->matrix || !result)
+    return RC_NULL_POINTER_INPUT;
   int rc = s21_create_matrix(A->rows, A->columns, result);
   if (rc != RC_OK)
     return rc;
@@ -50,6 +56,8 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 }
 
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+  if (!A || !A->matrix || !B || !B->matrix || !result)
+    return RC_NULL_POINTER_INPUT;
   if (A->rows != B->columns)
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 

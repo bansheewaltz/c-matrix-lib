@@ -5,7 +5,7 @@
 #include "s21_matrix_supplementary.h"
 
 int s21_transpose(matrix_t *A, matrix_t *result) {
-  if (A == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
   int rc = s21_create_matrix(A->columns, A->rows, result);
   if (rc != RC_OK)
@@ -20,9 +20,9 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
 // through permutations
 int s21_determinant(matrix_t *A, double *result) {
-  if (A == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  if (A->columns != A->rows)
+  if (!s21_is_square(A))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int matrix_size = A->columns;
@@ -51,9 +51,9 @@ int s21_determinant(matrix_t *A, double *result) {
 // Compute the cofactors matrix, the Hadamard multiplication of the minors
 // matrix with an alternating grid of +1 and −1.
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
-  if (A == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  if (A->columns != A->rows)
+  if (!s21_is_square(A))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = RC_OK;
@@ -66,14 +66,15 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (rc != RC_OK)
     return rc;
 
-  int matrix_elements_count = for (int i = 0; i < result->columns *; i++) {
+  int matrix_size = A->rows * A->rows;
+  for (int i = 1; i < matrix_size; i += 2) {
   }
 
   return rc;
 }
 
 int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
-  if (A == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
 
   int err = 0;
