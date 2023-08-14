@@ -48,8 +48,8 @@ int s21_determinant(matrix_t *A, double *result) {
   return RC_OK;
 }
 
-// Compute the cofactors matrix, the Hadamard multiplication of the minors
-// matrix with an alternating grid of +1 and −1.
+// Compute the cofactors matrix, the Hadamard multiplication (element-wise
+// product) of the minors matrix with an alternating grid of +1 and −1.
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
@@ -66,8 +66,10 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (rc != RC_OK)
     return rc;
 
+  // Hadamard multiplication
   int matrix_size = A->rows * A->rows;
   for (int i = 1; i < matrix_size; i += 2) {
+    result->matrix[i / A->rows][i % A->columns] *= -1;
   }
 
   return rc;
