@@ -59,7 +59,7 @@ bool s21_is_invertable(matrix_t *A) {
   return !s21_is_singular(A);
 }
 
-bool s21_are_the_same_size(matrix_t *A, matrix_t *B) {
+bool s21_are_same_size(matrix_t *A, matrix_t *B) {
   if (A == NULL || B == NULL)
     return false;
   if (A->rows != B->rows || A->columns != B->columns)

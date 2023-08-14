@@ -23,6 +23,6 @@ bool s21_is_invertable(matrix_t *A);
 
 // Checks that the two matrices are the same size.
 // Also, returns false if any of the arguments of pointer type is NULL.
-bool s21_are_the_same_size(matrix_t *A, matrix_t *B);
+bool s21_are_same_size(matrix_t *A, matrix_t *B);
 
 #endif  // S21_MATRIX_SUPPLEMENTARY_H_

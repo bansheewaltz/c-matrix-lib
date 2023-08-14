@@ -11,7 +11,7 @@
 int s21_eq_matrix(matrix_t *A, matrix_t *B) {
   if (!A || !A->matrix || !B || !B->matrix)
     return FAILURE;
-  if (!s21_are_the_same_size(A, B))
+  if (!s21_are_same_size(A, B))
     return FAILURE;
   for (int i = 0; i < A->columns; i++) {
     for (int j = 0; j < A->rows; j++) {
