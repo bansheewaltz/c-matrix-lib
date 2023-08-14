@@ -5,6 +5,9 @@
 
 #include "s21_matrix.h"
 
+// Calculates the matrix size as its rows * columns.
+int s21_matrix_size(matrix_t *A, int *result);
+
 // Calculates the minors matrix, a matrix of determinants of submatrices.
 // Checks the arguments of pointer type for NULL value.
 int s21_calc_minors(matrix_t *A, matrix_t *result);

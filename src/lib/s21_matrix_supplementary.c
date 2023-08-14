@@ -5,6 +5,13 @@
 
 #include "s21_matrix.h"
 
+int s21_matrix_size(matrix_t *A, int *result) {
+  if (A == NULL)
+    return RC_NULL_POINTER_INPUT;
+  *result = A->columns * A->rows;
+  return RC_OK;
+}
+
 bool s21_is_square(matrix_t *A) {
   if (A == NULL)
     return false;
