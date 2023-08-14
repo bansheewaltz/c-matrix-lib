@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stddef.h>
 
 #include "s21_matrix.h"
 
@@ -7,6 +8,8 @@
 #define EPS 1e-7
 
 int s21_eq_matrix(matrix_t *A, matrix_t *B) {
+  if (A == NULL || B == NULL)
+    return FAILURE;
   if (A->columns != B->columns || A->rows != B->rows)
     return FAILURE;
   for (int i = 0; i < A->columns; i++) {
