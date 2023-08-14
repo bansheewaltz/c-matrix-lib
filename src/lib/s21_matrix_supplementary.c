@@ -29,6 +29,36 @@ bool s21_is_diagonal(matrix_t *A) {
   return true;
 }
 
+bool s21_is_singular(matrix_t *A) {
+  if (A == NULL || A->matrix == NULL)
+    return false;
+
+  if (!s21_is_square(A))
+    return false;
+
+  if (s21_is_diagonal(A)) {
+    for (int i = 0; i < A->rows; i++) {
+      for (int j = i; j < A->columns; j++) {
+        if (i != j)
+          break;
+        if (A->matrix[i][j] == 0)
+          return true;
+      }
+    }
+  }
+
+  // regular square matrix case
+  double det = 0.0;
+  int rc = s21_determinant(A, &det);
+  if (rc != RC_OK)
+    return false;
+  return det == 0.0;
+}
+
+bool s21_is_invertable(matrix_t *A) {
+  return !s21_is_singular(A);
+}
+
 bool s21_are_the_same_size(matrix_t *A, matrix_t *B) {
   if (A == NULL || B == NULL)
     return false;
