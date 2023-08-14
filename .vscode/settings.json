@@ -3,9 +3,9 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.associations": {
+        "*.h": "c",
         "*.check": "plaintext",
         "Makefile*": "makefile",
-        "*.h": "c",
     },
     "debug.autoExpandLazyVariables": true,
     "debug.console.closeOnEnd": true,
