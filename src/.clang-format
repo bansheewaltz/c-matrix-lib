@@ -2,3 +2,5 @@
 BasedOnStyle: Google
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortFunctionsOnASingleLine: None
+ColumnLimit: 79
+...
