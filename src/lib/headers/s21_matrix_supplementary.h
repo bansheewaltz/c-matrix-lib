@@ -12,6 +12,8 @@ int s21_matrix_size(matrix_t *A, int *result);
 // Checks the arguments of pointer type for NULL value.
 int s21_calc_minors(matrix_t *A, matrix_t *result);
 
+int s21_adjugate(matrix_t *A, matrix_t *result);
+
 // Result is the matrix excluding the r-th row and the c-th column.
 // Checks the arguments of pointer type for NULL value.
 int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result);

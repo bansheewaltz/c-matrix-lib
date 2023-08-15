@@ -93,19 +93,12 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   }
 
   // general case of an invertable matrix
-  matrix_t cofactor;
-  rc = s21_calc_complements(A, &cofactor);
+  matrix_t adjugate;
+  rc = s21_transpose(A, &adjugate);
   if (rc != RC_OK)
     return rc;
-  matrix_t transpose;
-  rc = s21_transpose(&cofactor, &transpose);
+  rc = s21_mult_number(&adjugate, 1.0 / det, result);
   if (rc != RC_OK)
     return rc;
-  s21_remove_matrix(&cofactor);
-  rc = s21_mult_number(&transpose, 1.0 / det, result);
-  if (rc != RC_OK)
-    return rc;
-  s21_remove_matrix(&transpose);
-
   return RC_OK;
 }

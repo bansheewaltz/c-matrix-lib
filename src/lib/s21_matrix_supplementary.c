@@ -118,3 +118,20 @@ int s21_calc_minors(matrix_t *A, matrix_t *result) {
 out:
   return rc;
 }
+
+int s21_adjugate(matrix_t *A, matrix_t *result) {
+  if (A == NULL || A->matrix == NULL || result == NULL)
+    return RC_NULL_POINTER_INPUT;
+
+  int rc;
+
+  matrix_t cofactor;
+  rc = s21_calc_complements(A, &cofactor);
+  if (rc != RC_OK)
+    return rc;
+  rc = s21_transpose(&cofactor, result);
+  if (rc != RC_OK)
+    return rc;
+
+  return RC_OK;
+}
