@@ -11,7 +11,7 @@ int s21_matrix_size(matrix_t *A) {
 int s21_matrix_size_s(matrix_t *A, int *result) {
   if (A == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  *result = A->columns * A->rows;
+  *result = s21_matrix_size(A);
   return RC_OK;
 }
 
@@ -21,10 +21,7 @@ bool s21_is_square(matrix_t *A) {
 int s21_is_square_s(matrix_t *A, bool *result) {
   if (A == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  if (A->columns == A->rows)
-    *result = true;
-  else
-    *result = false;
+  *result = s21_is_square(A);
   return RC_OK;
 }
 
@@ -129,18 +126,17 @@ int s21_calc_minors(matrix_t *A, matrix_t *result) {
       matrix_t submatrix;
       rc = s21_extract_submatrix(A, i, j, &submatrix);
       if (rc != RC_OK)
-        goto out;
+        return rc;
 
       double determinant = 0.0;
       rc = s21_determinant(&submatrix, &determinant);
       if (rc != RC_OK)
-        goto out;
+        return rc;
 
       result->matrix[i][j] = determinant;
     }
   }
 
-out:
   return rc;
 }
 
