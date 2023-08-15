@@ -5,28 +5,34 @@
 
 #include "s21_matrix.h"
 
-int s21_matrix_size(matrix_t *A, int *result) {
-  if (A == NULL)
+int s21_matrix_size(matrix_t *A) {
+  return A->columns * A->rows;
+}
+int s21_matrix_size_s(matrix_t *A, int *result) {
+  if (A == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
   *result = A->columns * A->rows;
   return RC_OK;
 }
 
 bool s21_is_square(matrix_t *A) {
-  if (A == NULL)
-    return false;
-  if (A->columns != A->rows)
-    return false;
-  return true;
+  return A->columns == A->rows;
+}
+int s21_is_square_s(matrix_t *A, bool *result) {
+  if (A == NULL || result == NULL)
+    return RC_NULL_POINTER_INPUT;
+  if (A->columns == A->rows)
+    *result = true;
+  else
+    *result = false;
+  return RC_OK;
 }
 
 bool s21_is_diagonal(matrix_t *A) {
-  if (A == NULL || A->matrix == NULL)
-    return false;
   if (!s21_is_square(A))
     return false;
   for (int i = 0; i < A->rows; i++) {
-    for (int j = 0; j < A->rows; j++) {
+    for (int j = 0; j < A->columns; j++) {
       if (i == j)
         continue;
       if (A->matrix[i][j] != 0)
@@ -35,43 +41,62 @@ bool s21_is_diagonal(matrix_t *A) {
   }
   return true;
 }
-
-bool s21_is_singular(matrix_t *A) {
-  if (A == NULL || A->matrix == NULL)
-    return false;
-
+int s21_is_diagonal_s(matrix_t *A, bool *result) {
+  if (A == NULL || A->matrix == NULL || result == NULL)
+    return RC_NULL_POINTER_INPUT;
   if (!s21_is_square(A))
-    return false;
+    return RC_INCORRECT_MATRIX;
+
+  for (int i = 0; i < A->rows; i++) {
+    for (int j = 0; j < A->columns; j++) {
+      if (i == j)
+        continue;
+      if (A->matrix[i][j] != 0) {
+        *result = false;
+        return RC_OK;
+      }
+    }
+  }
+
+  *result = true;
+  return RC_OK;
+}
+
+int s21_is_singular(matrix_t *A, bool *result, double *res_det) {
+  if (A == NULL || A->matrix == NULL)
+    return RC_NULL_POINTER_INPUT;
+  if (!s21_is_square(A))
+    return RC_INCORRECT_MATRIX;
 
   if (s21_is_diagonal(A)) {
     for (int i = 0; i < A->rows; i++) {
-      for (int j = i; j < A->columns; j++) {
-        if (i != j)
-          break;
-        if (A->matrix[i][j] == 0)
-          return true;
+      if (A->matrix[i][i] == 0) {
+        *result = true;
+        return RC_OK;
       }
     }
   }
 
   // regular square matrix case
-  double det = 0.0;
-  int rc = s21_determinant(A, &det);
+  int rc = s21_determinant(A, res_det);
   if (rc != RC_OK)
-    return false;
-  return det == 0.0;
+    return rc;
+  *result = (*res_det == 0.0);
+  return RC_OK;
 }
 
-bool s21_is_invertable(matrix_t *A) {
-  return !s21_is_singular(A);
+int s21_is_invertible(matrix_t *A, bool *result, double *res_det) {
+  return !s21_is_singular(A, result, res_det);
 }
 
 bool s21_are_same_size(matrix_t *A, matrix_t *B) {
-  if (A == NULL || B == NULL)
-    return false;
-  if (A->rows != B->rows || A->columns != B->columns)
-    return false;
-  return true;
+  return A->rows == B->rows && A->columns == B->columns;
+}
+int s21_are_same_size_s(matrix_t *A, matrix_t *B, bool *result) {
+  if (A == NULL || B == NULL || result == NULL)
+    return RC_NULL_POINTER_INPUT;
+  *result = A->rows == B->rows && A->columns == B->columns;
+  return RC_OK;
 }
 
 int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
@@ -122,9 +147,7 @@ out:
 int s21_adjugate(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-
-  int rc;
-
+  int rc = RC_OK;
   matrix_t cofactor;
   rc = s21_calc_complements(A, &cofactor);
   if (rc != RC_OK)
@@ -132,6 +155,5 @@ int s21_adjugate(matrix_t *A, matrix_t *result) {
   rc = s21_transpose(&cofactor, result);
   if (rc != RC_OK)
     return rc;
-
   return RC_OK;
 }
