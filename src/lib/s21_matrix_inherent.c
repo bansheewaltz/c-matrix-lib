@@ -22,7 +22,7 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 int s21_determinant(matrix_t *A, double *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  if (A->columns != A->rows)
+  if (!s21_is_square(A))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int matrix_size = A->columns;
@@ -53,7 +53,7 @@ int s21_determinant(matrix_t *A, double *result) {
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  if (A->columns != A->rows)
+  if (!s21_is_square(A))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = RC_OK;
