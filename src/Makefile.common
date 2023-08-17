@@ -4,6 +4,9 @@ BUILD := ../build
 REPORTS := ../reports
 ### Tools specification. goes to the PACKAGES variable afterwards
 CC := gcc
+ifeq "$(ARCHITECTURE)" "arm64"
+  CC := gcc-12
+endif
 AR := ar
 COV := gcovr
 LINT := clang-format
