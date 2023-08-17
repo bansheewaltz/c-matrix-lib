@@ -12,15 +12,17 @@ ARCHITECTURE := $(shell uname -m)
 # DISTRO := $(findstring )
 # STRIP = $(shell cat $(1) | grep -o '^NAME="[^"]*' | sed 's/NAME="//g')
 PLATFORM := $(KERNEL)/$(ARCHITECTURE)
-OS :=
 ifeq "$(KERNEL)" "Darwin"
+  MACOS := T
 	OS := macOS
 endif
 ifeq "$(KERNEL)" "Linux"
 	ifeq "$(DISTRO)" "Ubuntu"
+	  UBUNTU := T
 		OS := Ubuntu
 	endif
 	ifeq "$(DISTRO)" "Alpine Linux"
+	  ALPINE := T
 		OS := Alpine
 	endif
 endif
