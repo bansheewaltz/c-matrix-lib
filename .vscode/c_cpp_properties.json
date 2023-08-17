@@ -3,7 +3,7 @@
         "projectIncludePath": [
             "${workspaceFolder}/src/include",
             "${workspaceFolder}/src/lib/headers",
-            // "${workspaceFolder}/src/test/headers"
+            "${workspaceFolder}/src/test/headers"
         ],
         "macDefaultIncludes": [
             "/opt/homebrew/Cellar/check/0.15.2/include",

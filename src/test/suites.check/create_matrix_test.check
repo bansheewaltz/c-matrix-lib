@@ -1,0 +1,111 @@
+#include <stdlib.h>
+
+#include "s21_matrix.h"
+
+#suite create_matrix
+#test generic
+  int rows = 13;
+  int cols = 17;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(m.rows, rows);
+  ck_assert_int_eq(m.columns, cols);
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      ck_assert_ldouble_eq_tol(0, m.matrix[i][j], 1e-06);
+    }
+  }
+  
+  for (int i = 0; i < rows; i++) {
+    free(m.matrix[i]);
+  }
+  free(m.matrix);
+
+
+#test null_pointer_matrix
+  int rows = 13;
+  int cols = 17;
+  matrix_t *m = NULL;
+  
+  int rc = s21_create_matrix(rows, cols, m);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test wrong_parameter_rows
+  int rows = -13;
+  int cols = 17;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+
+#test wrong_parameter_cols
+  int rows = 13;
+  int cols = -17;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+
+#test malloc_failed_matrix
+  int rows = 137;
+  int cols = 139;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+
+#test malloc_failed_matrix_arrays
+  int rows = 139;
+  int cols = 137;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+
+#test large_row_count
+  int rows = 137;
+  int cols = 10;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_OK);
+
+  s21_remove_matrix(&m);
+
+
+#test large_row_count_2
+  int rows = 139;
+  int cols = 10;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_OK);
+
+  s21_remove_matrix(&m);
+
+
+#test large_column_count
+  int rows = 10;
+  int cols = 139;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_OK);
+
+  s21_remove_matrix(&m);

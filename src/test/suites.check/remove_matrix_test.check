@@ -1,0 +1,34 @@
+#include <stdlib.h>
+
+#include "s21_matrix.h"
+
+#suite remove_matrix
+#test generic
+  int rows = 13;
+  int cols = 17;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  s21_remove_matrix(&m);
+  
+
+#test null_pointer
+  matrix_t *m = NULL;
+  
+  s21_remove_matrix(m);
+
+
+#test freed_matrix
+  int rows = 13;
+  int cols = 17;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  for (int i = 0; i < rows; i++) {
+    free(m.matrix[i]);
+  }
+  free(m.matrix);
+  m.matrix = NULL;
+  s21_remove_matrix(&m);
