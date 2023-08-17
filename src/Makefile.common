@@ -44,7 +44,7 @@ HDRS := $(shell find $(INCS) -name *.h)
 ### Filenames specification
 LIBNAME := $(PROJNAME)
 ### Compilation parameters
-OFLAG  ?= -O0
+OFLAG  ?= -O2
 WFLAGS := -Wall \
           -Werror \
           -Wextra \
@@ -56,7 +56,7 @@ LDLIBS   := -l$(LIBNAME)
 LDFLAGS  := -L$(LIB)
 STDFLAG  := -std=c11
 INCFLAGS := $(INCS:%=-I%)
-DBGFLAGS ?= -g0
+DBGFLAGS ?= -g
 LINTFLAGS = -style=Google
 DEFINES_TEST = -DTESTING
 ifeq "$(KERNEL)" "Linux"
