@@ -57,3 +57,98 @@
   
   s21_remove_matrix(&m1);
   s21_remove_matrix(&m2);
+
+
+#test failure_different_size
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows + 1, cols, &m2); // rows: + 1
+  ck_assert_int_eq(rc, RC_OK);
+  
+  for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+          double rand_val = get_rand_double(DBL_MIN, DBL_MAX);
+          m1.matrix[i][j] = rand_val;
+          m2.matrix[i][j] = rand_val;
+      }
+  }
+  
+  ck_assert_int_eq(s21_eq_matrix(&m1, &m2), FAILURE);
+  
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);
+
+
+#test nullpointer_first
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  matrix_t m2;
+  int rc = s21_create_matrix(rows, cols, &m2);
+  ck_assert_int_eq(rc, RC_OK);
+
+  ck_assert_int_eq(s21_eq_matrix(NULL, &m2), FAILURE);
+
+  s21_remove_matrix(&m2);
+
+
+#test nullpointer_matrix_array_first
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows, cols, &m2);
+  ck_assert_int_eq(rc, RC_OK);
+
+  for(int i = 0; i < rows; i++){
+    free(m1.matrix[i]);
+  }
+  free(m1.matrix);
+  m1.matrix = NULL;
+  ck_assert_int_eq(s21_eq_matrix(&m1, &m2), FAILURE);
+
+  s21_remove_matrix(&m2);
+
+
+#test nullpointer_matrix_array_second
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows, cols, &m2);
+  ck_assert_int_eq(rc, RC_OK);
+
+  for(int i = 0; i < rows; i++){
+    free(m2.matrix[i]);
+  }
+  free(m2.matrix);
+  m2.matrix = NULL;
+  ck_assert_int_eq(s21_eq_matrix(&m1, &m2), FAILURE);
+
+  s21_remove_matrix(&m1);
+
+
+#test nullpointer_second
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  matrix_t m1;
+  int rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+
+  ck_assert_int_eq(s21_eq_matrix(&m1, NULL), FAILURE);
+
+  s21_remove_matrix(&m1);
+
+
+#test nullpointer_both
+  ck_assert_int_eq(s21_eq_matrix(NULL, NULL), FAILURE);
