@@ -1,0 +1,75 @@
+#=============================================================================
+### Specifications detection:
+
+KERNEL := $(shell uname -s)
+DISTRO := $(shell cat /etc/os-release 2>/dev/null | grep -o '^NAME="[^"]*' |\
+                                                    sed 's/NAME="//g')
+ARCHITECTURE := $(shell uname -m)
+
+# OS_RELEASE := $(shell cat /etc/os-release 2>/dev/null)
+# DISTRO := $(shell cat $(OS_RELEASE) | grep -o '^NAME="[^"]*' | sed 's/NAME="//g')
+# DISTRO := $(if $(OS_RELEASE),$(call STRIP, $(OS_RELEASE)), )
+# DISTRO := $(findstring )
+# STRIP = $(shell cat $(1) | grep -o '^NAME="[^"]*' | sed 's/NAME="//g')
+PLATFORM := $(KERNEL)/$(ARCHITECTURE)
+OS :=
+ifeq "$(KERNEL)" "Darwin"
+	OS := macOS
+endif
+ifeq "$(KERNEL)" "Linux"
+	ifeq "$(DISTRO)" "Ubuntu"
+		OS := Ubuntu
+	endif
+	ifeq "$(DISTRO)" "Alpine Linux"
+		OS := Alpine
+	endif
+endif
+
+#=============================================================================
+### Packages' presence checks:
+
+# shell
+BASH         ?= $(call IS_INSTALLED, bash)
+# static analyzers
+CPPCHECK     ?= $(call IS_INSTALLED, cppcheck)
+CLANG-TIDY   ?= $(call IS_INSTALLED, clang-tidy)
+# virtualization
+DOCKER       ?= $(call IS_INSTALLED, docker)
+# compilers
+GCC          ?= $(call IS_INSTALLED, gcc)
+CLANG        ?= $(call IS_INSTALLED, clang)
+# code-coverage
+GCOV         ?= $(call IS_INSTALLED, gcov)
+LCOV         ?= $(call IS_INSTALLED, lcov)
+GCOVR        ?= $(call IS_INSTALLED, gcovr)
+# dynamic analyzers
+VALGRIND     ?= $(call IS_INSTALLED, valgrind)
+LEAKS        ?= $(call IS_INSTALLED, leaks)
+# linters
+CLANG-FORMAT ?= $(call IS_INSTALLED, clang-format)
+# utils
+PKG-CONFIG   ?= $(call IS_INSTALLED, pkg-config)
+
+# libs
+LIB_CHECK    ?= $(call IS_INSTALLED_LIB, check)
+
+#=============================================================================
+### Special targets and variables:
+
+.SECONDARY :# keeps all intermediate files
+.SUFFIXES :# cleans-up debug info
+.DELETE_ON_ERROR :# deletes target-files that caused an error during the build
+.DEFAULT_GOAL := all
+MAKEFLAGS += --no-print-directory
+MAKEFLAGS += --output-sync=target
+MAKEFLAGS += --no-builtin-rules
+
+#=============================================================================
+### Macros:
+
+RM := rm -rf
+MK := mkdir -p
+dir_guard = @$(MK) $(@D)
+format_the_file = $(LINT) -i $(LINTFLAGS) $@
+IS_INSTALLED     = $(shell command -v $(1) 2> /dev/null)
+IS_INSTALLED_LIB = $(shell pkg-config --cflags --libs $(1) 2> /dev/null)

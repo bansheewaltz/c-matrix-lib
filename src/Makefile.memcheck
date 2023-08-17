@@ -1,0 +1,57 @@
+CONFIG := memcheck
+### some variables and targets are stored in a shared makefile
+include Makefile.common
+include Makefile.autoconfig
+# tools specification
+MEMCHECK ?= valgrind
+# paths
+CHK := $(TST)/suites.check/lib
+SRC_B := $(BLD)/src
+T_INC := $(TST)/headers
+# filenames specification
+TST_REPORT_R := $(REPORTS)/memcheck_report_raw.log
+# project files
+T_SRCS := $(SRCS:$(SRC)/s21_%.c=$(SRC_B)/%_test.c)
+T_EXES := $(SRCS:$(SRC)/s21_%.c=$(BIN)/%_test)
+# compilation parameters
+CK_FORK=no# proper way of memory usage checking when using 'check' framework
+LDLIBS += $(shell pkg-config --libs-only-l check)
+LDFLAGS += $(shell pkg-config --libs-only-L check)
+INCFLAGS += -I$(T_INC)
+MEMFLAGS := --leak-check=full \
+            --show-leak-kinds=all \
+            --track-origins=yes \
+            --trace-children=yes
+DBGFLAGS := -g
+CFLAGS = $(DBGFLAGS) $(WFLAGS) $(STDFLAG) $(shell pkg-config --cflags check) $(DEFINES) $(INCFLAGS)
+export CK_FORK SHELL TST_REPORT_R
+
+
+.PHONY: memcheck
+memcheck:
+	$(info )
+	$(info *** silently compiling build version for checking memory usage ***)
+	$(info *** with the parameters: $(CFLAGS) $(LDFLAGS) $(LDLIBS))
+	$(info *** executing through $(MEMCHECK) with the parameters: $(MEMFLAGS))
+	$(MAKE) -f Makefile.memcheck $(T_EXES)
+	echo -e "\n\nyou can check saved $(MEMCHECK) logs at $(TST_REPORT_R)"
+
+ifdef SEPARATED
+$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(REPORTS)
+	$(dir_guard)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(LDLIBS) -o $@
+	-(echo && $(MEMCHECK) $(MEMFLAGS) $@) 2> >(bash $(SCRIPTS_DIR)/format_memcheck.sh)
+else
+$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(REPORTS)
+	$(dir_guard)
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) $(LDLIBS) -o $@
+	-(echo && $(MEMCHECK) $(MEMFLAGS) $@) 2> >(bash $(SCRIPTS_DIR)/format_memcheck.sh)
+endif
+
+$(SRC_B)/%_test.c: $(CHK)/%_test.check
+	$(dir_guard)
+	checkmk $< > $@
+	$(format_the_file)
+
+$(REPORTS):
+	@$(MK) $@

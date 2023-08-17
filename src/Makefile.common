@@ -1,0 +1,62 @@
+PROJNAME := s21_matrix
+### End directories
+BUILD := ../build
+REPORTS := ../reports
+### Tools specification. goes to the PACKAGES variable afterwards
+CC := gcc
+AR := ar
+COV := gcovr
+LINT := clang-format
+SHELL := /bin/bash
+MEMCHECK := valgrind
+LIBS := check
+UTILS := pkg-config
+export
+include Makefile.autoconfig
+### Paths
+SRC := lib
+INC := include# public header
+HDR := $(SRC)/headers# private headers
+# UTL := $(SRC)/utils
+TST := test
+CHK := $(TST)/suites.check
+BLD  = $(BUILD)/$(CONFIG)# CONFIG is specified in each individual Makefile
+OBJ  = $(BLD)/obj
+BIN  = $(BLD)/bin
+LIB := $(BUILD)/output/lib
+SCRIPTS_DIR := $(TST)/scripts
+
+### Project files
+CHKS := $(wildcard $(CHK)/*.check)
+UTLS := $(wildcard $(UTL)/*.c)
+## test driven build
+# SRCS := $(CHKS:$(CHK)/%_test.check=$(SRC)/s21_%.c)
+# OBJS := $(CHKS:$(CHK)/%_test.check=$(OBJ)/s21_%.o) $(UTLS:$(UTL)/%.c=$(OBJ)/%.o)
+## source driven build
+SRCS := $(wildcard $(SRC)/*.c)
+OBJS := $(SRCS:$(SRC)/%.c=$(OBJ)/%.o) $(UTLS:$(UTL)/%.c=$(OBJ)/%.o)
+INCS := $(INC) $(HDR)
+HDRS := $(shell find $(INCS) -name *.h)
+
+### Filenames specification
+LIBNAME := $(PROJNAME)
+### Compilation parameters
+OFLAG  ?= -O0
+WFLAGS := -Wall \
+          -Werror \
+          -Wextra \
+          -Wconversion \
+          -Wshadow \
+          -Wpedantic \
+          -pedantic-errors
+LDLIBS   := -l$(LIBNAME)
+LDFLAGS  := -L$(LIB)
+STDFLAG  := -std=c11
+INCFLAGS := $(INCS:%=-I%)
+DBGFLAGS ?= -g0
+LINTFLAGS = -style=Google
+DEFINES_TEST = -DTESTING
+ifeq "$(KERNEL)" "Linux"
+  DEFINES = -D_DEFAULT_SOURCE
+endif
+CFLAGS = $(OFLAG) $(DBGFLAGS) $(STDFLAG) $(DEFINES) $(INCFLAGS) $(WFLAGS)

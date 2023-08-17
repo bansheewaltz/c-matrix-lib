@@ -1,0 +1,26 @@
+include Makefile.common
+
+### Debugging misc
+.PHONY: testf
+testf: lib # temporary file for debugging is called temp.c and located in src
+	$(CC) -g -I$(INC) -I$(HDR) -I$(TST)/headers temp.c $(LIBNAME).a $(shell pkg-config --cflags --libs check) -o temp
+	./temp
+
+.PHONY: info
+info:          # shows desired variable's value
+	@echo $(PLATFORM)
+	@echo $(DISTRO)
+# @echo $(OBJS)
+
+.PHONY: tclean # temp files clean
+tclean:
+	$(RM) temp
+	$(RM) temp.dSYM
+
+fpinfo:
+	@$(CC) -DJUST_PRINT lib/utils/s21_print_fp_sysinfo.c -o temp.out
+	@./temp.out || true
+	@rm temp.out
+.PHONY: fpinfo
+
+.PHONY: framework
