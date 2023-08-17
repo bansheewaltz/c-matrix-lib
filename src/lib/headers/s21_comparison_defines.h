@@ -1,0 +1,8 @@
+#ifndef S21_COMPARISON_DEFINES_H_
+#define S21_COMPARISON_DEFINES_H_
+
+#define SUCCESS 1
+#define FAILURE 0
+#define EPS_EQ 1e-7
+
+#endif  // S21_COMPARISON_DEFINES_H_
