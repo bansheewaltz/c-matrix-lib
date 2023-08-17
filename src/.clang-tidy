@@ -1,5 +1,9 @@
 ---
-# bugprone-easily-swappable-parameters -- This warning is loud with no clear advice on how to fix the potential problem
+# bugprone-easily-swappable-parameters -- Loud with no clear advice on how to fix the potential problem
+# cert-msc30-c
+# cert-msc50-cpp
+# cert-msc50-cpp
+# clang-analyzer-security.insecureAPI.rand -- Warning about poor random algorithm, alternative limits portability
 Checks: >
   cppcoreguidelines-*,
   clang-diagnostic-*,
@@ -14,7 +18,10 @@ Checks: >
   misc-*,
   google-*,
   -bugprone-easily-swappable-parameters,
-  -modernize-macro-to-enum
+  -modernize-macro-to-enum,
+  -cert-msc30-c,
+  -cert-msc50-cpp,
+  -clang-analyzer-security.insecureAPI.rand
 WarningsAsErrors: true
 HeaderFilterRegex: >
   "(src/headers).*\\.h$"
