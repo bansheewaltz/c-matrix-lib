@@ -9,7 +9,12 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
   if (rows < 1 || columns < 1)
     return RC_INCORRECT_MATRIX_PARAMETERS;
 
-  result->matrix = calloc(columns, sizeof(double *));
+  result->matrix = calloc((unsigned)rows, sizeof(double *));
+#ifdef TESTING
+  if (rows == 137 && columns == 139) {
+    result->matrix = NULL;
+  }
+#endif
   if (result->matrix == NULL)
     return RC_MEMORY_ALLOCATION_FAILED;
 
@@ -18,8 +23,13 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
   result->rows = rows;
   result->columns = columns;
 
-  for (int i = 0; i < columns; i++) {
-    result->matrix[i] = (double *)calloc(rows, sizeof(double));
+  for (int i = 0; i < rows; i++) {
+    result->matrix[i] = calloc((unsigned)columns, sizeof(double));
+#ifdef TESTING
+    if (rows == 139 && columns == 137) {
+      result->matrix[i] = NULL;
+    }
+#endif
     if (result->matrix[i] == NULL) {
       rc = RC_MEMORY_ALLOCATION_FAILED;
       break;
@@ -32,10 +42,10 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
 void s21_remove_matrix(matrix_t *A) {
   if (A == NULL)
     return;
-  if (A->matrix) {
-    for (int i = 0; i < A->columns; i++) {
-      free(A->matrix[i]);
-    }
+  if (A->matrix == NULL)
+    return;
+  for (int i = 0; i < A->rows; i++) {
+    free(A->matrix[i]);
   }
   free(A->matrix);
 }
