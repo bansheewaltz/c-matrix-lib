@@ -19,16 +19,22 @@ COV_REPORT := index.html
 T_SRCS := $(CHKS:$(CHK)/%.check=$(SRC_B)/%.c)
 T_EXES := $(CHKS:$(CHK)/%.check=$(BIN)/%)
 ### Build parameters
-LDLIBS  += $(shell pkg-config --libs-only-l $(LIBS))
-LDFLAGS += $(shell pkg-config --libs-only-L $(LIBS))
-DBGFLAGS = -g
+LDLIBS  = $(shell pkg-config --libs-only-l $(LIBS))
+LDFLAGS = $(shell pkg-config --libs-only-L $(LIBS))
 COVFLAG := --coverage
+DBGFLAGS := -g
+OFLAG := -O0
+MEMFLAGS := --tool=memcheck \
+            --leak-check=full \
+            --show-leak-kinds=all \
+            --track-origins=yes \
+            --trace-children=yes \
+						--show-error-list=yes
 ### Summary
-CFLAGS_TEST    := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) -I$(T_INC) $(DEFINES) $(shell pkg-config --cflags check)# $(WFLAGS)
+CFLAGS_TEST    := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) -I$(T_INC) $(DEFINES) $(shell pkg-config --cflags check) $(WFLAGS)
 CFLAGS_SOURCSE := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) $(DEFINES_TEST) $(COVFLAG) $(WFLAGS)
-CK_FORK = no
+CK_FORK := no
 export TST CK_FORK
-
 
 .PHONY: test
 test:
@@ -45,7 +51,7 @@ test:
 # 	$(dir_guard)
 # 	$(CC) $(DBGFLAGS) $(COVFLAG) $^ $(LDFLAGS) $(LDLIBS) -o $@
 # 	-mv $(OBJ)/s21_$*.gcno $(COV_INF) 2> /dev/null
-# 	# -./$@ | tee -a $(TST_REPORT_R) > >(bash testing/scripts/format_toutput.sh)
+# 	# -./$@ | tee -a $(TST_REPORT_R) > >(bash $(SCRIPTS_DIR)/format_toutput.sh)
 # 	-./$@ | tee -a $(TST_REPORT_R)
 # 	mv $(OBJ)/s21_$*.gcda $(COV_INF)
 
@@ -53,12 +59,11 @@ move_coverage_info:
 	-mv $(OBJ)/*.gcno $(COV_INF) 2> /dev/null
 	-mv $(OBJ)/*.gcda $(COV_INF) 2> /dev/null
 
-$(BIN)/%_test: $(BLD)/$(LIBNAME).a $(OBJ)/%_test.o | $(COV_INF) $(REPORTS)
+$(BIN)/%_test: $(OBJ)/%_test.o $(BLD)/$(LIBNAME).a | $(COV_INF) $(REPORTS)
 	$(dir_guard)
 	$(CC) $(DBGFLAGS) $(COVFLAG) $^ $(LDFLAGS) $(LDLIBS) -o $@
-	# -./$@ | tee -a $(TST_REPORT_R) > >(bash test/scripts/format_toutput.sh)
 ifdef VALGRIND
-	-(echo && valgrind --leak-check=full $@) 2> >(bash $(SCRIPTS_DIR)/format_memcheck.sh)
+	-(echo && valgrind $(MEMFLAGS) $@) 2> >(bash $(SCRIPTS_DIR)/format_memcheck.sh)
 else
 	-./$@ | tee -a $(TST_REPORT_R)
 endif
@@ -90,18 +95,18 @@ $(REPORTS):
 
 .PHONY: gcov_report
 gcov_report: $(T_EXES)
-ifeq (, $(shell which gcovr))
+ifndef GCOVR
 	$(error "gcovr" tool should be installed)
 endif
 	@$(MK) $(COV_REP)
-	-gcovr --txt --fail-under-line 80 $(COV_INF)
+	-gcovr --txt --branches --fail-under-branch 80 $(COV_INF)
 	 gcovr --html-details --html-self-contained -o $(COV_REP)/$(COV_REPORT) $(COV_INF)
 ifeq ($(OS), macOS)
 	open $(COV_REP)/$(COV_REPORT)
 endif
 
 .PHONY: show
-show: gcov_report
-ifeq ($(OS), macOS)
+show:
+ifdef MACOS
 	open $(COV_REP)/$(COV_REPORT)
 endif
