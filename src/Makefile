@@ -1,20 +1,17 @@
-CONFIG ?= development
+CONFIG ?= submission
 ### many variables are stored in a shared makefile
 include Makefile.common
 include Makefile.misc
 # build parameters
-ifeq "$(CONFIG)" "development"
-	DBGFLAGS := -g
-	CFLAGS := $(OFLAG) $(DBGFLAGS) $(STDFLAG) $(INCFLAGS) $(WFLAGS)
+ifeq "$(CONFIG)" "testing"
+	CFLAGS := $(DBGFLAGS) $(STDFLAG) $(INCFLAGS) $(WFLAGS)
 endif
-ifeq "$(CONFIG)" "release"
-	OFLAG := -O0
-	CFLAGS := $(OFLAG) $(INCFLAGS)
-endif
-ifeq "$(OS)" "Alpine"
+ifeq "$(CONFIG)" "submission"
 	CFLAGS := $(DBGFLAGS) $(INCFLAGS)
 endif
-# CFLAGS ?= $(OFLAG) $(DBGFLAGS) $(STDFLAG) $(INCFLAGS) $(WFLAGS)
+ifeq "$(CONFIG)" "release"
+	CFLAGS := $(OFLAG) $(INCFLAGS)
+endif
 # Makefile search paths
 vpath %.c $(SRC) $(UTL)
 vpath lib%.a $(LIB)
@@ -47,8 +44,9 @@ $(OBJ)/%.o: %.c $(HDRS) | $(OBJ)
 $(OBJ):
 	@$(MK) $@
 
-.PHONY: test retest gcov_report show
+.PHONY: test retest gcov_report recov show
 retest: fclean test
+recov: retest gcov_report
 test gcov_report show: lib
 	@$(MAKE) -s -f Makefile.unit_testing $@
 
