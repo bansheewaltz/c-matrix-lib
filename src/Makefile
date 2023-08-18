@@ -47,7 +47,7 @@ $(OBJ):
 .PHONY: test retest gcov_report recov show
 retest: fclean test
 recov: retest gcov_report
-test gcov_report show: lib
+test gcov_report show:
 	@$(MAKE) -s -f Makefile.unit_testing $@
 
 .PHONY: clean
