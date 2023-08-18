@@ -66,10 +66,6 @@ re: fclean
 
 
 # helper targets
-.PHONY: check
-check:
-	command -v 
-
 .PHONY: prep
 prep:
 ifeq "$(KERNEL)" "Linux"

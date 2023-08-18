@@ -58,7 +58,6 @@ STDFLAG  := -std=c11
 INCFLAGS := $(INCS:%=-I%)
 DBGFLAGS ?= -g
 LINTFLAGS = -style=Google
-DEFINES_TEST = -DTESTING
 ifeq "$(KERNEL)" "Linux"
   DEFINES = -D_DEFAULT_SOURCE
 endif

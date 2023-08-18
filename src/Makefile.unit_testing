@@ -22,11 +22,14 @@ COV_REPORT   := $(COV_REP)/index.html
 SRCS_T := $(CHKS:$(CHK)/%.check=$(SRC_T)/%.c)
 EXES_T := $(CHKS:$(CHK)/%.check=$(BIN_T)/%)
 ### Build parameters
-LDLIBS  := $(shell pkg-config --libs-only-l $(LIBS))
-LDFLAGS := $(shell pkg-config --libs-only-L $(LIBS))
-COVFLAG := --coverage
+LDLIBS     := $(shell pkg-config --libs-only-l       $(LIBS))
+LDFLAGS    := $(shell pkg-config --libs-only-L       $(LIBS))
+LDOPTIONS  := $(shell pkg-config --libs-only-other   $(LIBS)) 
+LIBINCS    := $(shell pkg-config --cflags-only-I     $(LIBS)) 
+LIBOPTIONS := $(shell pkg-config --cflags-only-other $(LIBS)) 
+COVFLAG  := --coverage
 DBGFLAGS := -g
-OFLAG := -O0
+OFLAG    := -O0
 MEMFLAGS := --tool=memcheck \
             --leak-check=full \
             --show-leak-kinds=all \
@@ -34,9 +37,11 @@ MEMFLAGS := --tool=memcheck \
             --trace-children=yes \
 						--show-error-list=yes
 ### Summary
-CFLAGS_TEST    := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) -I$(INC_T) $(DEFINES) $(shell pkg-config --cflags check) $(WFLAGS)
-CFLAGS_SOURCSE := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) $(DEFINES_TEST) $(COVFLAG) $(WFLAGS)
+CFLAGS_TEST    := $(OFLAG) $(DBGFLAGS) $(STDFLAG) $(LIBOPTIONS) -I$(INC) -I$(HDR) -I$(INC_T) $(LIBINCS) $(WFLAGS)
+CFLAGS_SOURCSE := $(OFLAG) $(DBGFLAGS) $(STDFLAG) $(COVFLAG) $(DEFINES_T) -I$(INC) -I$(HDR) $(WFLAGS)
+### Variables
 CK_FORK := no
+DEFINES_T = -DTESTING
 export TST CK_FORK
 
 .PHONY: test
@@ -62,9 +67,8 @@ move_coverage_info:
 	-mv $(OBJ)/*.gcno $(COV_INF) 2> /dev/null
 	-mv $(OBJ)/*.gcda $(COV_INF) 2> /dev/null
 
-$(BIN_T)/%: $(OBJ_T)/%.o $(BLD)/$(LIBNAME).a | $(COV_INF) $(REPORTS)
-	$(dir_guard)
-	$(CC) $(DBGFLAGS) $(COVFLAG) $^ $(LDFLAGS) $(LDLIBS) -o $@
+$(BIN_T)/%: $(OBJ_T)/%.o $(BLD)/$(LIBNAME).a | $(BIN_T) $(COV_INF) $(REPORTS)
+	$(CC) $(DBGFLAGS) $(COVFLAG) $(LDOPTIONS) $(LDFLAGS) $^ $(LDLIBS) -o $@
 ifdef VALGRIND
 	-(echo && valgrind $(MEMFLAGS) $@) 2> >(bash $(SCRIPTS_DIR)/format_memcheck.sh)
 else
@@ -82,15 +86,18 @@ $(OBJ_T)/%.o: CFLAGS = $(CFLAGS_TEST)
 $(OBJ_T)/%.o: $(SRC_T)/%.c | $(OBJ_T)
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(SRC_T)/%.c: $(CHK)/%.check
-	$(dir_guard)
+$(SRC_T)/%.c: $(CHK)/%.check | $(SRC_T)
 	checkmk $< > $@
 	$(format_the_file)
 
-# directories creation
+### Directories creation
 $(OBJ):
 	@$(MK) $@
+$(SRC_T):
+	@$(MK) $@
 $(OBJ_T):
+	@$(MK) $@
+$(BIN_T):
 	@$(MK) $@
 $(COV_INF):
 	@$(MK) $@
