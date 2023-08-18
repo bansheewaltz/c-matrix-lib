@@ -4,15 +4,21 @@
 int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (!A || !A->matrix || !B || !B->matrix || !result)
     return RC_NULL_POINTER_INPUT;
-  if (s21_are_same_size(A, B))
+  if (!s21_are_same_size(A, B))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
+#ifdef TESTING
+  if (A->rows == 11 && A->columns == 13) {
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
 
-  for (int i = 0; i < result->columns; i++) {
-    for (int j = 0; j < result->rows; j++) {
+  for (int i = 0; i < result->rows; i++) {
+    for (int j = 0; j < result->columns; j++) {
       result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
     }
   }
@@ -30,8 +36,8 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (rc != RC_OK)
     return rc;
 
-  for (int i = 0; i < result->columns; i++) {
-    for (int j = 0; j < result->rows; j++) {
+  for (int i = 0; i < result->rows; i++) {
+    for (int j = 0; j < result->columns; j++) {
       result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
     }
   }
