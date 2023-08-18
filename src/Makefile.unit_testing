@@ -3,24 +3,27 @@ CONFIG := unit_testing
 include Makefile.common
 ### Tools specification
 COV ?= gcovr
-### Paths
-SRC_B := $(BLD)/src
-T_INC := $(TST)/headers
+### Project paths
+BLD_T := $(BLD)/test
+SRC_T := $(BLD_T)/src
+OBJ_T := $(BLD_T)/obj
+BIN_T := $(BLD_T)/bin
+INC_T := $(TST)/headers
 COV_REP := $(REPORTS)/coverage_report
 COV_INF := $(BLD)/coverage_info
 ### Filenames specification
 TST_REPORT_R := $(REPORTS)/tests_report_raw.txt
-COV_REPORT := index.html
+COV_REPORT   := $(COV_REP)/index.html
 ### Project files
 ## case when each function is in a separate file
-# T_SRCS := $(SRCS:$(SRC)/s21_%.c=$(SRC_B)/%_test.c)
-# T_EXES := $(SRCS:$(SRC)/s21_%.c=$(BIN)/%_test)
+# SRCS_T := $(SRCS:$(SRC)/s21_%.c=$(SRC_T)/%_test.c)
+# EXES_T := $(SRCS:$(SRC)/s21_%.c=$(BIN_T)/%_test)
 ## case of generic function grouping in files
-T_SRCS := $(CHKS:$(CHK)/%.check=$(SRC_B)/%.c)
-T_EXES := $(CHKS:$(CHK)/%.check=$(BIN)/%)
+SRCS_T := $(CHKS:$(CHK)/%.check=$(SRC_T)/%.c)
+EXES_T := $(CHKS:$(CHK)/%.check=$(BIN_T)/%)
 ### Build parameters
-LDLIBS  = $(shell pkg-config --libs-only-l $(LIBS))
-LDFLAGS = $(shell pkg-config --libs-only-L $(LIBS))
+LDLIBS  := $(shell pkg-config --libs-only-l $(LIBS))
+LDFLAGS := $(shell pkg-config --libs-only-L $(LIBS))
 COVFLAG := --coverage
 DBGFLAGS := -g
 OFLAG := -O0
@@ -31,7 +34,7 @@ MEMFLAGS := --tool=memcheck \
             --trace-children=yes \
 						--show-error-list=yes
 ### Summary
-CFLAGS_TEST    := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) -I$(T_INC) $(DEFINES) $(shell pkg-config --cflags check) $(WFLAGS)
+CFLAGS_TEST    := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) -I$(INC_T) $(DEFINES) $(shell pkg-config --cflags check) $(WFLAGS)
 CFLAGS_SOURCSE := $(OFLAG) $(DBGFLAGS) $(STDFLAG) -I$(INC) -I$(HDR) $(DEFINES_TEST) $(COVFLAG) $(WFLAGS)
 CK_FORK := no
 export TST CK_FORK
@@ -44,10 +47,10 @@ test:
 	$(info *** compiler parameters for source .o files: $(CFLAGS_SOURCSE))
 	$(info *** linker parameters: $(COVFLAG) $(LDFLAGS) $(LDLIBS))
 	$(info )
-	$(MAKE) -f Makefile.unit_testing $(T_EXES)
+	$(MAKE) -f Makefile.unit_testing $(EXES_T)
 	$(MAKE) -f Makefile.unit_testing move_coverage_info
 
-# $(BIN)/%_test: $(OBJ)/s21_%.o $(OBJ)/%_test.o | $(COV_INF) $(REPORTS)
+# $(BIN_T)/%_test: $(OBJ)/s21_%.o $(OBJ)/%_test.o | $(COV_INF) $(REPORTS)
 # 	$(dir_guard)
 # 	$(CC) $(DBGFLAGS) $(COVFLAG) $^ $(LDFLAGS) $(LDLIBS) -o $@
 # 	-mv $(OBJ)/s21_$*.gcno $(COV_INF) 2> /dev/null
@@ -59,7 +62,7 @@ move_coverage_info:
 	-mv $(OBJ)/*.gcno $(COV_INF) 2> /dev/null
 	-mv $(OBJ)/*.gcda $(COV_INF) 2> /dev/null
 
-$(BIN)/%_test: $(OBJ)/%_test.o $(BLD)/$(LIBNAME).a | $(COV_INF) $(REPORTS)
+$(BIN_T)/%: $(OBJ_T)/%.o $(BLD)/$(LIBNAME).a | $(COV_INF) $(REPORTS)
 	$(dir_guard)
 	$(CC) $(DBGFLAGS) $(COVFLAG) $^ $(LDFLAGS) $(LDLIBS) -o $@
 ifdef VALGRIND
@@ -75,17 +78,19 @@ $(OBJ)/s21_%.o: CFLAGS = $(CFLAGS_SOURCSE)
 $(OBJ)/s21_%.o: $(SRC)/s21_%.c | $(OBJ)
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(OBJ)/%_test.o: CFLAGS = $(CFLAGS_TEST)
-$(OBJ)/%_test.o: $(SRC_B)/%_test.c | $(OBJ)
+$(OBJ_T)/%.o: CFLAGS = $(CFLAGS_TEST)
+$(OBJ_T)/%.o: $(SRC_T)/%.c | $(OBJ_T)
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(SRC_B)/%_test.c: $(CHK)/%_test.check
+$(SRC_T)/%.c: $(CHK)/%.check
 	$(dir_guard)
 	checkmk $< > $@
 	$(format_the_file)
 
 # directories creation
 $(OBJ):
+	@$(MK) $@
+$(OBJ_T):
 	@$(MK) $@
 $(COV_INF):
 	@$(MK) $@
@@ -94,15 +99,15 @@ $(REPORTS):
 
 
 .PHONY: gcov_report
-gcov_report: $(T_EXES)
+gcov_report: $(EXES_T)
 ifndef GCOVR
 	$(error "gcovr" tool should be installed)
 endif
 	@$(MK) $(COV_REP)
 	-gcovr --txt --branches --fail-under-branch 80 $(COV_INF)
-	 gcovr --html-details --html-self-contained -o $(COV_REP)/$(COV_REPORT) $(COV_INF)
+	 gcovr --html-details --html-self-contained -o $(COV_REPORT) $(COV_INF)
 ifeq ($(OS), macOS)
-	open $(COV_REP)/$(COV_REPORT)
+	open $(COV_REPORT)
 endif
 
 .PHONY: show
