@@ -8,7 +8,7 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
-#ifdef TESTING
+#ifdef TEST_MALLOC
   if (A->rows == 11 && A->columns == 13) {
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;

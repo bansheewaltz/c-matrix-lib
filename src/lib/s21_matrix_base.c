@@ -13,7 +13,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
     return RC_INCORRECT_MATRIX_PARAMETERS;
 
   result->matrix = calloc((unsigned)rows, sizeof(double *));
-#ifdef TESTING
+#ifdef TEST_MALLOC
   if (rows == 137 && columns == 139) {
     free(result->matrix);
     result->matrix = NULL;
@@ -27,7 +27,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
 
   for (int i = 0; i < rows; i++) {
     result->matrix[i] = calloc((unsigned)columns, sizeof(double));
-#ifdef TESTING
+#ifdef TEST_MALLOC
     if (rows == 139 && columns == 137 && i > 0) {
       free(result->matrix[i]);
       result->matrix[i] = NULL;

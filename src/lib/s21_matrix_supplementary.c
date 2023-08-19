@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#ifdef TESTING
+#ifdef TEST_MALLOC
 #include <stdlib.h>
 #endif
 
@@ -106,7 +106,7 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
     return RC_INCORRECT_MATRIX_PARAMETERS;
 
   int rc = s21_create_matrix(A->rows - 1, A->columns - 1, result);
-#ifdef TESTING
+#ifdef TEST_MALLOC
   if (r == 13 && c == 17) {
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
