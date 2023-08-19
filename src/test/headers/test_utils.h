@@ -1,6 +1,8 @@
 #ifndef UTILS_H_
 #define UTILS_H_
 
+#include <float.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "s21_matrix.h"
@@ -27,12 +29,35 @@ int get_rand_pos_int(int max) {
   return r % top;
 }
 
-void nullify_matrix_array(matrix_t *m) {
+void cleanup_matrix_2d_array(matrix_t *m) {
   for (int i = 0; i < m->rows; i++) {
     free(m->matrix[i]);
   }
   free(m->matrix);
   m->matrix = NULL;
+}
+
+void cleanup_matrix_rows_arrays(matrix_t *m) {
+  for (int i = 0; i < m->rows; i++) {
+    free(m->matrix[i]);
+  }
+}
+
+void print_matrix(matrix_t *m) {
+  for (int i = 0; i < m->rows; i++) {
+    for (int j = 0; j < m->columns; j++) {
+      printf("%f ", m->matrix[i][j]);
+    }
+    printf("\n");
+  }
+}
+
+void fill_matrix_with_rand(matrix_t *m) {
+  for (int i = 0; i < m->rows; i++) {
+    for (int j = 0; j < m->columns; j++) {
+      m->matrix[i][j] = get_rand_double(DBL_MIN, DBL_MAX);
+    }
+  }
 }
 
 #endif  // UTILS_H_
