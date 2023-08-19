@@ -1,0 +1,106 @@
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "test_utils.h"
+
+
+#suite are_same_size
+#test generic
+  const int rows1 = rand() % 100 + 1;
+  const int cols1 = rand() % 100 + 1;
+  const int rows2 = rand() % 100 + 1;
+  const int cols2 = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows1, cols1, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows2, cols2, &m2);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = rows1 == rows2 && cols1 == cols2;
+  bool res = s21_are_same_size(&m1, &m2);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);
+
+
+#test generic_true
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows, cols, &m2);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = true;
+  bool res = s21_are_same_size(&m1, &m2);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);
+
+
+#test neq_rows
+  const int rows = 2;
+  const int cols = 2;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows + 1, cols, &m2); // rows + 1
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = false;
+  bool res = s21_are_same_size(&m1, &m2);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);
+
+
+#test neq_cols
+  const int rows = 2;
+  const int cols = 2;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows, cols + 1, &m2); // cols + 1
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = false;
+  bool res = s21_are_same_size(&m1, &m2);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);
+
+
+#test neq_rows_n_cols
+  const int rows = 2;
+  const int cols = 2;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows + 1, cols + 1, &m2); // rows + 1 and cols + 1
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = false;
+  bool res = s21_are_same_size(&m1, &m2);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);

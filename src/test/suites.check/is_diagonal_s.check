@@ -1,0 +1,195 @@
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "test_utils.h"
+
+
+#suite is_diagonal_s
+#test generic
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      m.matrix[i][j] = get_rand_double(DBL_MIN, DBL_MAX);
+    }
+  }
+
+  bool is_square = rows == cols;
+  bool exp = true;
+  if (is_square == false)
+    goto out_loop;
+  for (int i = 0; i < rows; i++) {
+    for (int j = 0; j < cols; j++) {
+      if (i == j)
+        continue;
+      if (m.matrix[i][j] != 0){
+        exp = false;
+        goto out_loop;
+      }
+    }
+  }
+  out_loop:
+  bool res;
+  rc = s21_is_diagonal_s(&m, &res);
+  
+  if (is_square == true) {
+    ck_assert_int_eq(rc, RC_OK);
+    ck_assert_int_eq(exp, res);
+  } else {
+    ck_assert_int_eq(rc, RC_INCORRECT_MATRIX);
+  }
+
+  s21_remove_matrix(&m);
+
+
+#test generic_diagonal
+  const int side = rand() % 100 + 1;
+  const int rows = side;
+  const int cols = side;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  for (int i = 0; i < side; i++) {
+    for (int j = 0; j < side; j++) {
+      if (i == j)
+        m.matrix[i][j] = get_rand_double(DBL_MIN, DBL_MAX);
+      else
+        m.matrix[i][j] = 0;
+    }
+  }
+
+  bool exp = true;
+  bool res;
+  rc = s21_is_diagonal_s(&m, &res);
+  ck_assert_int_eq(rc, RC_OK);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m);
+
+
+#test square_empty
+  const int rows = 2;
+  const int cols = 2;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = true;
+  bool res;
+  rc = s21_is_diagonal_s(&m, &res);
+  ck_assert_int_eq(rc, RC_OK);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m);
+
+
+#test not_square
+  const int rows = 2;
+  const int cols = 3;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool res;
+  rc = s21_is_diagonal_s(&m, &res);
+
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX);
+
+  s21_remove_matrix(&m);
+
+
+#test square_diagonal
+  const int side = 3;
+  const int rows = side;
+  const int cols = side;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){1, 0, 0};
+  m.matrix[1] = (double[]){0, 2, 0};
+  m.matrix[2] = (double[]){0, 0, 3};
+  
+  bool exp = true;
+  bool res;
+  rc = s21_is_diagonal_s(&m, &res);
+  ck_assert_int_eq(rc, RC_OK);
+
+  ck_assert_int_eq(exp, res);
+
+  free(m.matrix);
+
+
+#test square_not_diagonal
+  const int side = 3;
+  const int rows = side;
+  const int cols = side;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){1, 0, 0};
+  m.matrix[1] = (double[]){0, 2, 0};
+  m.matrix[2] = (double[]){0, 3, 3};
+  
+  bool exp = false;
+  bool res;
+  rc = s21_is_diagonal_s(&m, &res);
+  ck_assert_int_eq(rc, RC_OK);
+
+  ck_assert_int_eq(exp, res);
+
+  free(m.matrix);
+
+
+#test nullpointer_matrix
+  int rc = RC_OK;
+
+  bool res;
+  rc = s21_is_diagonal_s(NULL, &res);
+
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_res
+  const int side = 3;
+  const int rows = side;
+  const int cols = side;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  rc = s21_is_diagonal_s(&m, NULL);
+
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  const int side = 3;
+  const int rows = side;
+  const int cols = side;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool res;
+  cleanup_matrix_2d_array(&m);
+  rc = s21_is_diagonal_s(&m, &res);
+
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  free(m.matrix);

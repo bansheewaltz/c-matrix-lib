@@ -1,0 +1,20 @@
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "test_utils.h"
+
+
+#suite matrix_size
+#test generic
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+
+  int exp = rows * cols;
+  int res = s21_matrix_size(&m1);
+
+  ck_assert_int_eq(exp, res);
+
+  s21_remove_matrix(&m1);

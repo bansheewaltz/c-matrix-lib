@@ -1,0 +1,272 @@
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "s21_comparison_defines.h"
+#include "test_utils.h"
+
+
+#suite extract_submatrix
+#test generic
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  matrix_t m;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  fill_matrix_with_rand(&m);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  ck_assert_int_eq(rc, RC_OK);
+  bool res = true;
+  for (int i = 0; i < rows - 1; i++) {
+    for (int j = 0; j < cols - 1; j++) {
+      int row = i;
+      if (i >= row_throw)
+        row += 1;
+      int col = j;
+      if (j >= col_throw)
+        col += 1;
+      if (m_sub.matrix[i][j] != m.matrix[row][col]){
+        res = false;
+        goto out_loop;
+      }
+    }
+  }
+  out_loop:
+
+  bool exp = true;
+  ck_assert_int_eq(res, exp);
+
+  s21_remove_matrix(&m);
+  s21_remove_matrix(&m_sub);
+
+
+#test specific
+  const int rows = 3;
+  const int row_throw = 0;
+  const int cols = 3;
+  const int col_throw = 2;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){1, 2, 3};
+  m.matrix[1] = (double[]){4, 5, 6};
+  m.matrix[2] = (double[]){7, 8, 9};
+  matrix_t m_sub_check;
+  rc = s21_create_matrix(rows - 1, cols - 1, &m_sub_check);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m_sub_check);
+  m_sub_check.matrix[0] = (double[]){4, 5};
+  m_sub_check.matrix[1] = (double[]){7, 8};
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool exp = SUCCESS;
+  bool res = s21_eq_matrix(&m_sub, &m_sub_check);
+  ck_assert_int_eq(res, exp);
+
+  free(m.matrix);
+  free(m_sub_check.matrix);
+  s21_remove_matrix(&m_sub);
+
+
+#test nullpointer_matrix
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  int rc = RC_OK;
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(NULL, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_submatrix
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, NULL);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  cleanup_matrix_2d_array(&m);
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  free(m.matrix);
+
+
+#test malloc_failed
+  const int row_throw = 13;
+  const int rows = rand() % 100 + 1 + row_throw;
+  const int col_throw = 17;
+  const int cols = rand() % 100 + 1 + col_throw;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+  s21_remove_matrix(&m);
+
+
+#test incorrect_row_negative
+  const int rows = rand() % 100 + 1;
+  const int row_throw = -1;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+  s21_remove_matrix(&m);
+
+
+#test incorrect_row_larger
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rows + 10;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+  s21_remove_matrix(&m);
+
+
+#test incorrect_eq_row_count
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = rand() % cols;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+  s21_remove_matrix(&m);
+
+
+#test incorrect_col_negative
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = -1;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+  s21_remove_matrix(&m);
+
+
+#test incorrect_col_larger
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = cols + 10;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+  s21_remove_matrix(&m);
+
+
+#test incorrect_eq_col_count
+  const int rows = rand() % 100 + 1;
+  const int row_throw = rand() % rows;
+  const int cols = rand() % 100 + 1;
+  const int col_throw = cols;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+
+  s21_remove_matrix(&m);
+
+
+#test proper_submatrix_size
+  const int row_throw = 13;
+  const int rows = rand() % 100 + 1 + row_throw;
+  const int col_throw = 11;
+  const int cols = rand() % 100 + 1 + col_throw;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t m_sub;
+  rc = s21_extract_submatrix(&m, row_throw, col_throw, &m_sub);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(m_sub.rows, rows - 1);
+  ck_assert_int_eq(m_sub.columns, cols - 1);
+
+  s21_remove_matrix(&m);
+  s21_remove_matrix(&m_sub);
