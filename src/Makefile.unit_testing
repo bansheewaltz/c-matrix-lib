@@ -93,6 +93,7 @@ $(SRC_T)/%.c: $(CHK)/%.check | $(SRC_T)
 ### Directories creation
 $(OBJ):
 	@$(MK) $@
+	@echo '*' > $@/../../.gitignore
 $(SRC_T):
 	@$(MK) $@
 $(OBJ_T):
@@ -103,6 +104,7 @@ $(COV_INF):
 	@$(MK) $@
 $(REPORTS):
 	@$(MK) $@
+	@echo '*' > $@/.gitignore
 
 
 .PHONY: gcov_report
