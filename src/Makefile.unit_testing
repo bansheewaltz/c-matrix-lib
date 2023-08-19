@@ -120,5 +120,5 @@ endif
 .PHONY: show
 show:
 ifdef MACOS
-	open $(COV_REP)/$(COV_REPORT)
+	open $(COV_REPORT)
 endif
