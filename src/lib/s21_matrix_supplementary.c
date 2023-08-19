@@ -2,6 +2,9 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#ifdef TESTING
+#include <stdlib.h>
+#endif
 
 #include "s21_matrix.h"
 
@@ -103,12 +106,24 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
     return RC_INCORRECT_MATRIX_PARAMETERS;
 
   int rc = s21_create_matrix(A->rows - 1, A->columns - 1, result);
+#ifdef TESTING
+  if (r == 13 && c == 17) {
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
 
-  for (int i = 0; i < A->rows; i++) {
-    for (int j = 0; j < A->columns; j++) {
-      result->matrix[i >= r ? i + 1 : i][j >= r ? j + 1 : j] = A->matrix[i][j];
+  for (int i = 0; i < result->rows; i++) {
+    for (int j = 0; j < result->columns; j++) {
+      int i_A = i;
+      if (i >= r)
+        i_A += 1;
+      int j_A = j;
+      if (j >= c)
+        j_A += 1;
+      result->matrix[i][j] = A->matrix[i_A][j_A];
     }
   }
 
