@@ -27,5 +27,5 @@
   
   int rc = s21_create_matrix(rows, cols, &m);
   ck_assert_int_eq(rc, RC_OK);
-  nullify_matrix_array(&m);
+  cleanup_matrix_2d_array(&m);
   s21_remove_matrix(&m);
