@@ -29,10 +29,16 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (!A || !A->matrix || !B || !B->matrix || !result)
     return RC_NULL_POINTER_INPUT;
-  if (s21_are_same_size(A, B))
+  if (!s21_are_same_size(A, B))
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
+#ifdef TEST_MALLOC
+  if (A->rows == 11 && A->columns == 13) {
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
 
@@ -50,11 +56,17 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
     return RC_NULL_POINTER_INPUT;
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
+#ifdef TEST_MALLOC
+  if (number == 13) {
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
 
-  for (int i = 0; i < result->columns; i++) {
-    for (int j = 0; j < result->rows; j++) {
+  for (int i = 0; i < result->rows; i++) {
+    for (int j = 0; j < result->columns; j++) {
       result->matrix[i][j] = A->matrix[i][j] * number;
     }
   }
@@ -68,17 +80,23 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
   if (A->rows != B->columns)
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
 
-  int rc = s21_create_matrix(B->rows, A->columns, result);
+  int rc = s21_create_matrix(A->rows, B->columns, result);
+#ifdef TEST_MALLOC
+  if (A->matrix[0][0] == 5 && B->matrix[0][0] == 7) {
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
 
   for (int i = 0; i < A->rows; i++) {
     for (int j = 0; j < B->columns; j++) {
       double sum = 0;
-      for (int k = 0; k < A->columns; k++) {
-        sum += A->matrix[i][k] * B->matrix[k][i];
+      for (int k = 0; k < B->rows; k++) {
+        sum += A->matrix[i][k] * B->matrix[k][j];
       }
-      result->matrix[j][i] = sum;
+      result->matrix[i][j] = sum;
     }
   }
 
