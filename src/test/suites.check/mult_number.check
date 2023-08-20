@@ -1,0 +1,95 @@
+#include "s21_matrix.h"
+#include "s21_comparison_defines.h"
+#include "test_utils.h"
+
+
+#suite mult_number
+#test generic_success
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  const int number = rand();
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t exp;
+  rc = s21_create_matrix(rows, cols, &exp);
+  ck_assert_int_eq(rc, RC_OK);
+  for (int i = 0; i < rows; i++) {
+      for (int j = 0; j < cols; j++) {
+          m.matrix[i][j] = get_rand_double(DBL_MIN, DBL_MAX);
+          exp.matrix[i][j] = m.matrix[i][j] * number;
+      }
+  }
+  matrix_t res;
+  rc = s21_mult_number(&m, number, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  int are_equal = s21_eq_matrix(&exp, &res);
+  ck_assert_int_eq(are_equal, SUCCESS);
+  
+  s21_remove_matrix(&m);
+  s21_remove_matrix(&res);
+  s21_remove_matrix(&exp);
+
+
+#test malloc_failed
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  const int number = 13; // special value for malloc failure
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  matrix_t res;
+  rc = s21_mult_number(&m, number, &res);
+  
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+  
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix
+  const int number = rand() % 100 + 1;
+  int rc = RC_OK;
+  
+  matrix_t res;
+  rc = s21_mult_number(NULL, number, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_res
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  const int number = 13;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  rc = s21_mult_number(&m, number, NULL);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+  
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  const int number = 13;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  cleanup_matrix_2d_array(&m);
+  matrix_t res;
+  rc = s21_mult_number(&m, number, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+  
+  s21_remove_matrix(&m);
