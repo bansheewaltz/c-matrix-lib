@@ -126,9 +126,9 @@
 
 
 #test malloc_failed
-  const int row_throw = 13;
+  const int row_throw = 13; // special value for malloc failure
   const int rows = rand() % 100 + 1 + row_throw;
-  const int col_throw = 17;
+  const int col_throw = 17; // special value for malloc failure
   const int cols = rand() % 100 + 1 + col_throw;
   int rc = RC_OK;
   matrix_t m;
