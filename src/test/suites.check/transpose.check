@@ -1,0 +1,94 @@
+#include "test_utils.h"
+
+#include <stdlib.h>
+
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "s21_comparison_defines.h"
+
+
+#suite transpose
+#test sample
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = 3;
+  const int cols = 2;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){1, 4};
+  m.matrix[1] = (double[]){2, 5};
+  m.matrix[2] = (double[]){3, 6};
+  matrix_t exp;
+  const int rows_exp = cols;
+  const int cols_exp = rows;
+  rc = s21_create_matrix(rows_exp, cols_exp, &exp);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&exp);
+  exp.matrix[0] = (double[]){1, 2, 3};
+  exp.matrix[1] = (double[]){4, 5, 6};
+
+  matrix_t res;
+  rc = s21_transpose(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(s21_eq_matrix(&exp, &res), SUCCESS);
+
+  free(m.matrix);
+  free(exp.matrix);
+  s21_remove_matrix(&res);
+
+
+#test malloc_failed
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  fill_matrix_with_rand(&m);
+
+  m.matrix[0][0] = 13; // special value for malloc failure
+  matrix_t res;
+  rc = s21_transpose(&m, &res);
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix
+  matrix_t res;
+  
+  int rc = s21_transpose(NULL, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_result
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  matrix_t m;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  rc = s21_transpose(&m, NULL);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  matrix_t m;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_2d_array(&m);
+  
+  matrix_t res;
+  rc = s21_transpose(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);

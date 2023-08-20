@@ -8,10 +8,16 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
   int rc = s21_create_matrix(A->columns, A->rows, result);
+#ifdef TEST_MALLOC
+  if (A->matrix[0][0] == 13) {
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
-  for (int i = 0; i < result->columns; i++) {
-    for (int j = 0; j < result->rows; j++) {
+  for (int i = 0; i < result->rows; i++) {
+    for (int j = 0; j < result->columns; j++) {
       result->matrix[i][j] = A->matrix[j][i];
     }
   }
