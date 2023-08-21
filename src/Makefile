@@ -99,7 +99,7 @@ endif
 linter_fix:   LINTFLAGS := -i $(LINTFLAGS)
 linter_check: LINTFLAGS := -n $(LINTFLAGS)
 linter_check linter_fix:
-	$(LINT) $(LINTFLAGS) $(shell find . -type f -name '*.h' -o -name '*.c')
+	$(LINT) $(LINTFLAGS) $(shell find .. -type f -name '*.h' -o -name '*.c')
 
 .PHONY: tidy
 tidy:
