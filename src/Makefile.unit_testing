@@ -113,6 +113,7 @@ ifndef GCOVR
 	$(error "gcovr" tool should be installed)
 endif
 	@$(MK) $(COV_REP)
+	@echo
 	-gcovr --txt --branches --fail-under-branch 80 $(COV_INF)
 	 gcovr --html-details --html-self-contained -o $(COV_REPORT) $(COV_INF)
 ifeq ($(OS), macOS)
