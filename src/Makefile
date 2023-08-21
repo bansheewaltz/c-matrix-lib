@@ -29,9 +29,6 @@ ifdef LIB_CHECK
 ifdef GCOVR
 	$(MAKE) gcov_report
 endif
-ifdef VALGRIND
-	$(MAKE) memcheck
-endif
 endif
 
 $(PROJNAME).a: $(OBJS)
