@@ -112,6 +112,19 @@
   s21_remove_matrix(&m);
 
 
+#test matrix_size_one
+  const int side_len = 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  matrix_t m;
+  
+  int rc = s21_create_matrix(rows, cols, &m);
+  
+  ck_assert_int_eq(rc, RC_OK);
+
+  s21_remove_matrix(&m);
+
+
 #test zero_rows_count
   int rows = 0;
   int cols = 139;

@@ -92,3 +92,29 @@
   rc = s21_transpose(&m, &res);
   
   ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test matrix_size_one
+  // should be square
+  const int side_len = 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  matrix_t m;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  m.matrix[0][0] = 1;
+  matrix_t exp;
+  rc = s21_create_matrix(rows, cols, &exp);
+  ck_assert_int_eq(rc, RC_OK);
+  exp.matrix[0][0] = 1;
+  
+  matrix_t res;
+  rc = s21_transpose(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(s21_eq_matrix(&exp, &res), SUCCESS);
+
+  s21_remove_matrix(&m);
+  s21_remove_matrix(&exp);
+  s21_remove_matrix(&res);
