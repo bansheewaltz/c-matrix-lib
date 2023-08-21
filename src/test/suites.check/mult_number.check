@@ -7,7 +7,7 @@
 #test generic_success
   const int rows = rand() % 100 + 1;
   const int cols = rand() % 100 + 1;
-  const int number = rand();
+  const double number = rand();
   int rc = RC_OK;
   matrix_t m;
   rc = s21_create_matrix(rows, cols, &m);
@@ -37,7 +37,7 @@
 #test malloc_failed
   const int rows = rand() % 100 + 1;
   const int cols = rand() % 100 + 1;
-  const int number = 13; // special value for malloc failure
+  const double number = 1.0 / 16; // special value for malloc failure
   int rc = RC_OK;
   matrix_t m;
   rc = s21_create_matrix(rows, cols, &m);
@@ -52,7 +52,7 @@
 
 
 #test nullpointer_matrix
-  const int number = rand() % 100 + 1;
+  const double number = rand() % 100 + 1;
   int rc = RC_OK;
   
   matrix_t res;
@@ -64,7 +64,7 @@
 #test nullpointer_res
   const int rows = rand() % 100 + 1;
   const int cols = rand() % 100 + 1;
-  const int number = 13;
+  const double number = 13;
   int rc = RC_OK;
   matrix_t m;
   rc = s21_create_matrix(rows, cols, &m);
@@ -80,7 +80,7 @@
 #test nullpointer_matrix_2d_array
   const int rows = rand() % 100 + 1;
   const int cols = rand() % 100 + 1;
-  const int number = 13;
+  const double number = 13;
   int rc = RC_OK;
   matrix_t m;
   rc = s21_create_matrix(rows, cols, &m);
@@ -92,4 +92,23 @@
   
   ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
   
+  s21_remove_matrix(&m);
+
+
+#test incorrect_matrix_dimensions
+  const int rows   = rand() % 100 + 1;
+  const int cols   = rand() % 100 + 1;
+  const double number = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  m.columns = -1;
+  matrix_t res;
+  rc = s21_mult_number(&m, number, &res);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+  
+  m.columns = cols;
   s21_remove_matrix(&m);

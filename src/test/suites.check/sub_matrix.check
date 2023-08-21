@@ -201,3 +201,27 @@
   
   s21_remove_matrix(&m1);
   s21_remove_matrix(&m2);
+
+
+#test incorrect_matrix_dimensions
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  int rc = RC_OK;
+  matrix_t m1;
+  rc = s21_create_matrix(rows, cols, &m1);
+  ck_assert_int_eq(rc, RC_OK);
+  matrix_t m2;
+  rc = s21_create_matrix(rows, cols, &m2);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  m1.columns = -1;
+  m2.columns = -1;
+  matrix_t res;
+  rc = s21_sub_matrix(&m1, &m2, &res);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+  
+  m1.columns = cols;
+  m2.columns = cols;
+  s21_remove_matrix(&m1);
+  s21_remove_matrix(&m2);

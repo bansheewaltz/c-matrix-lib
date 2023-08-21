@@ -64,7 +64,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
 #ifdef TEST_MALLOC
-  if (rc == RC_OK && number == 13) {  // trigger value
+  if (rc == RC_OK && number == 1.0 / 16) {  // trigger value
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }

@@ -198,7 +198,7 @@
   free(m.matrix);
 
 
-#test malloc_failed_t_number
+#test malloc_failed_mult_number
   int rc = RC_OK;
   // should be square
   matrix_t m;
@@ -210,6 +210,27 @@
   cleanup_matrix_rows_arrays(&m);
   m.matrix[0] = (double[]){15, 1};
   m.matrix[1] = (double[]){ 2, 1};
+
+  matrix_t res;
+  rc = s21_inverse_matrix(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+  free(m.matrix);
+
+
+#test failed_mult_number
+  int rc = RC_OK;
+  // should be square
+  matrix_t m;
+  const int side_len = 2;
+  const int rows = side_len;
+  const int cols = side_len;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){16, 1};
+  m.matrix[1] = (double[]){ 0, 1};
 
   matrix_t res;
   rc = s21_inverse_matrix(&m, &res);

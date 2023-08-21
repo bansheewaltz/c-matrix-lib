@@ -113,8 +113,8 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
   }
 
   int rc = s21_create_matrix(A->rows - 1, A->columns - 1, result);
-#ifdef TEST_MALLOC
-  if (rc == RC_OK && r == 13 && c == 17) {  // trigger values
+#ifdef TEST_MALLOC           // only malloc can fail here
+  if (r == 13 && c == 17) {  // trigger values
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }

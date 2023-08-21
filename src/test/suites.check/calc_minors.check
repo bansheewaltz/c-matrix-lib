@@ -128,3 +128,25 @@
   rc = s21_calc_minors(&m, &res);
   
   ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test incorrect_matrix_dimensions
+  // should be square
+  const int side_len = rand() % 100 + 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  m.columns = -1;
+  m.rows    = -1;
+  matrix_t res;
+  rc = s21_calc_minors(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX_PARAMETERS);
+  
+  m.columns = cols;
+  m.rows    = rows;
+  s21_remove_matrix(&m);
