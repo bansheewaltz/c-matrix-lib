@@ -7,10 +7,12 @@
 void s21_cleanup_matrix(matrix_t *A);
 
 int s21_create_matrix(int rows, int columns, matrix_t *result) {
-  if (result == NULL)
+  if (result == NULL) {
     return RC_NULL_POINTER_INPUT;
-  if (rows < 1 || columns < 1)
+  }
+  if (rows < 1 || columns < 1) {
     return RC_INCORRECT_MATRIX_PARAMETERS;
+  }
 
   result->matrix = calloc((unsigned)rows, sizeof(double *));
 #ifdef TEST_MALLOC
@@ -19,8 +21,9 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
     result->matrix = NULL;
   }
 #endif
-  if (result->matrix == NULL)
+  if (result->matrix == NULL) {
     return RC_MEMORY_ALLOCATION_FAILED;
+  }
 
   result->rows = rows;
   result->columns = columns;
@@ -43,10 +46,8 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
 }
 
 void s21_remove_matrix(matrix_t *A) {
-  if (A == NULL)
-    return;
-  if (A->matrix == NULL)
-    return;
+  if (A == NULL) return;
+  if (A->matrix == NULL) return;
   for (int i = 0; i < A->rows; i++) {
     free(A->matrix[i]);
   }

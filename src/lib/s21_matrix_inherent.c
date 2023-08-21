@@ -6,8 +6,9 @@
 #include "s21_matrix_supplementary.h"
 
 int s21_transpose(matrix_t *A, matrix_t *result) {
-  if (A == NULL || A->matrix == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
+  }
   const int rows_t = A->columns;
   const int cols_t = A->rows;
   int rc = s21_create_matrix(rows_t, cols_t, result);
@@ -17,8 +18,9 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
 #endif
-  if (rc != RC_OK)
+  if (rc != RC_OK) {
     return rc;
+  }
   for (int i = 0; i < result->rows; i++) {
     for (int j = 0; j < result->columns; j++) {
       result->matrix[i][j] = A->matrix[j][i];
@@ -29,10 +31,12 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
 // through permutations
 int s21_determinant(matrix_t *A, double *result) {
-  if (A == NULL || A->matrix == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
-  if (!s21_is_square(A))
+  }
+  if (!s21_is_square(A)) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
+  }
 
   const int side_len = A->columns;
 
@@ -74,10 +78,12 @@ int s21_determinant(matrix_t *A, double *result) {
 // Compute the cofactor matrix, the Hadamard multiplication (element-wise
 // product) of the minors matrix with an alternating grid of +1 and −1.
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
-  if (A == NULL || A->matrix == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
-  if (!s21_is_square(A))
+  }
+  if (!s21_is_square(A)) {
     return RC_INCORRECT_MATRIX;
+  }
 
   int rc = RC_OK;
 
@@ -88,8 +94,9 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
 #endif
-  if (rc != RC_OK)
+  if (rc != RC_OK) {
     return rc;
+  }
 
   // Hadamard multiplication
   int matrix_size = A->rows * A->rows;
@@ -101,10 +108,12 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
 }
 
 int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
-  if (A == NULL || A->matrix == NULL || result == NULL)
+  if (A == NULL || A->matrix == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
-  if (!s21_is_square(A))
+  }
+  if (!s21_is_square(A)) {
     return RC_INCORRECT_MATRIX;
+  }
 
   int rc = RC_OK;
 
@@ -122,8 +131,9 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
       rc = RC_MEMORY_ALLOCATION_FAILED;
     }
 #endif
-    if (rc != RC_OK)
+    if (rc != RC_OK) {
       return rc;
+    }
     result->matrix[0][0] = 1.0 / A->matrix[0][0];
     return RC_OK;
   }
@@ -137,8 +147,9 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
 #endif
-  if (rc != RC_OK)
+  if (rc != RC_OK) {
     return rc;
+  }
   rc = s21_mult_number(&adjugate, 1.0 / determinant, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && A->matrix[0][0] == 15) {  // trigger value
