@@ -1,5 +1,6 @@
 
 #include <stddef.h>
+#include <stdio.h>
 
 #include "s21_matrix.h"
 #include "s21_matrix_supplementary.h"
@@ -7,9 +8,11 @@
 int s21_transpose(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
-  int rc = s21_create_matrix(A->columns, A->rows, result);
+  const int rows_t = A->columns;
+  const int cols_t = A->rows;
+  int rc = s21_create_matrix(rows_t, cols_t, result);
 #ifdef TEST_MALLOC
-  if (A->matrix[0][0] == 13) {
+  if (rc == RC_OK && A->matrix[0][0] == 13) {  // trigger value
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
@@ -37,6 +40,11 @@ int s21_determinant(matrix_t *A, double *result) {
     *result = A->matrix[0][0];
     return RC_OK;
   }
+  if (side_len == 2) {
+    double **m = A->matrix;
+    *result = m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    return RC_OK;
+  }
   if (s21_is_diagonal(A)) {
     double diagonal_product = 1.0;
     for (int i = 0; i < side_len; i++) {
@@ -49,12 +57,12 @@ int s21_determinant(matrix_t *A, double *result) {
   // permutations method for a general case of a square matrix
   double pos_diagonal_sum = 0.0;
   double neg_diagonal_sum = 0.0;
-  for (int i = 0; i < side_len; i++) {
+  for (int i = 0; i < A->columns; i++) {
     double pos_diagonal = 1.0;
     double neg_diagonal = 1.0;
     for (int j = 0; j < side_len; j++) {
-      pos_diagonal *= A->matrix[(i + j) % side_len][(i + j) % side_len];
-      neg_diagonal *= A->matrix[(i - j) % side_len][(i - j) % side_len];
+      pos_diagonal *= A->matrix[j][(i + j) % side_len];
+      neg_diagonal *= A->matrix[j][((i - j) % side_len + side_len) % side_len];
     }
     pos_diagonal_sum += pos_diagonal;
     neg_diagonal_sum += neg_diagonal;
@@ -69,16 +77,20 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL)
     return RC_NULL_POINTER_INPUT;
   if (!s21_is_square(A))
-    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
+    return RC_INCORRECT_MATRIX;
 
   int rc = RC_OK;
 
-  rc = s21_create_matrix(A->columns, A->rows, result);
-  if (rc != RC_OK)
-    return rc;
   rc = s21_calc_minors(A, result);
+#ifdef TEST_MALLOC
+  if (rc == RC_OK && A->matrix[0][0] == 117) {  // trigger value
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
+
   // Hadamard multiplication
   int matrix_size = A->rows * A->rows;
   for (int i = 1; i < matrix_size; i += 2) {
@@ -98,14 +110,18 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
 
   bool is_invertible = false;
   double determinant = 0.0;
-  rc = s21_is_invertible(A, &is_invertible, &determinant);
-  if (rc != RC_OK)
-    return rc;
-  if (is_invertible == false)
+  (void)s21_is_invertible(A, &is_invertible, &determinant);  // all checks are
+  if (is_invertible == false)                                // made
     return RC_INCORRECT_MATRIX;
 
   if (s21_matrix_size(A) == 1) {
     rc = s21_create_matrix(1, 1, result);
+#ifdef TEST_MALLOC
+    if (A->matrix[0][0] == 14) {  // trigger value
+      s21_remove_matrix(result);
+      rc = RC_MEMORY_ALLOCATION_FAILED;
+    }
+#endif
     if (rc != RC_OK)
       return rc;
     result->matrix[0][0] = 1.0 / A->matrix[0][0];
@@ -115,10 +131,21 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   // general case of an invertable matrix
   matrix_t adjugate;
   rc = s21_adjugate(A, &adjugate);
+#ifdef TEST_MALLOC
+  if (rc == RC_OK && A->matrix[0][0] == 14) {  // trigger value
+    s21_remove_matrix(&adjugate);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
   if (rc != RC_OK)
     return rc;
   rc = s21_mult_number(&adjugate, 1.0 / determinant, result);
-  if (rc != RC_OK)
-    return rc;
-  return RC_OK;
+#ifdef TEST_MALLOC
+  if (rc == RC_OK && A->matrix[0][0] == 15) {  // trigger value
+    s21_remove_matrix(result);
+    rc = RC_MEMORY_ALLOCATION_FAILED;
+  }
+#endif
+  s21_remove_matrix(&adjugate);
+  return rc;
 }

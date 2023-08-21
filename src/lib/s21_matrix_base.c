@@ -14,7 +14,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
 
   result->matrix = calloc((unsigned)rows, sizeof(double *));
 #ifdef TEST_MALLOC
-  if (rows == 137 && columns == 139) {
+  if (rows == 137 && columns == 139) {  // trigger values
     free(result->matrix);
     result->matrix = NULL;
   }
@@ -28,7 +28,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
   for (int i = 0; i < rows; i++) {
     result->matrix[i] = calloc((unsigned)columns, sizeof(double));
 #ifdef TEST_MALLOC
-    if (rows == 139 && columns == 137 && i > 0) {
+    if (rows == 139 && columns == 137 && i > 0) {  // trigger values
       free(result->matrix[i]);
       result->matrix[i] = NULL;
     }

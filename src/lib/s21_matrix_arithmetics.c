@@ -9,7 +9,7 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
 #ifdef TEST_MALLOC
-  if (A->rows == 11 && A->columns == 13) {
+  if (rc == RC_OK && A->rows == 11 && A->columns == 13) {  // trigger value
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
@@ -34,7 +34,7 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
 #ifdef TEST_MALLOC
-  if (A->rows == 11 && A->columns == 13) {
+  if (rc == RC_OK && A->rows == 11 && A->columns == 13) {  // trigger value
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
@@ -57,7 +57,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 
   int rc = s21_create_matrix(A->rows, A->columns, result);
 #ifdef TEST_MALLOC
-  if (number == 13) {
+  if (rc == RC_OK && number == 13) {  // trigger value
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
@@ -82,7 +82,7 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
 
   int rc = s21_create_matrix(A->rows, B->columns, result);
 #ifdef TEST_MALLOC
-  if (A->matrix[0][0] == 5 && B->matrix[0][0] == 7) {
+  if (rc == RC_OK && A->matrix[0][0] == 5 && B->matrix[0][0] == 7) {
     s21_remove_matrix(result);
     rc = RC_MEMORY_ALLOCATION_FAILED;
   }
