@@ -1,0 +1,62 @@
+Running suite(s): calc_adjugate
+100%: Checks: 8, Failures: 0, Errors: 0
+Running suite(s): are_same_size
+100%: Checks: 5, Failures: 0, Errors: 0
+Running suite(s): are_same_size_s
+100%: Checks: 8, Failures: 0, Errors: 0
+Running suite(s): calc_complements
+100%: Checks: 7, Failures: 0, Errors: 0
+Running suite(s): calc_minors
+100%: Checks: 8, Failures: 0, Errors: 0
+Running suite(s): create_matrix
+100%: Checks: 12, Failures: 0, Errors: 0
+Running suite(s): determinant
+100%: Checks: 7, Failures: 0, Errors: 0
+Running suite(s): eq_matrix
+100%: Checks: 8, Failures: 0, Errors: 0
+Running suite(s): extract_submatrix
+100%: Checks: 14, Failures: 0, Errors: 0
+Running suite(s): inverse_matrix
+100%: Checks: 12, Failures: 0, Errors: 0
+Running suite(s): is_diagonal
+100%: Checks: 6, Failures: 0, Errors: 0
+Running suite(s): is_diagonal_s
+100%: Checks: 9, Failures: 0, Errors: 0
+Running suite(s): is_invertible
+100%: Checks: 8, Failures: 0, Errors: 0
+Running suite(s): is_singular
+100%: Checks: 8, Failures: 0, Errors: 0
+Running suite(s): is_square
+100%: Checks: 3, Failures: 0, Errors: 0
+Running suite(s): is_square_s
+100%: Checks: 5, Failures: 0, Errors: 0
+Running suite(s): matrix_size
+100%: Checks: 1, Failures: 0, Errors: 0
+Running suite(s): matrix_size_s
+100%: Checks: 4, Failures: 0, Errors: 0
+Running suite(s): mult_matrix
+100%: Checks: 11, Failures: 0, Errors: 0
+Running suite(s): mult_number
+100%: Checks: 6, Failures: 0, Errors: 0
+Running suite(s): remove_matrix
+100%: Checks: 3, Failures: 0, Errors: 0
+Running suite(s): sub_matrix
+100%: Checks: 10, Failures: 0, Errors: 0
+Running suite(s): sum_matrix
+100%: Checks: 10, Failures: 0, Errors: 0
+Running suite(s): transpose
+100%: Checks: 7, Failures: 0, Errors: 0
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: .
+------------------------------------------------------------------------------
+File                                    Branches   Taken  Cover   Missing
+------------------------------------------------------------------------------
+lib/s21_matrix_arithmetics.c                  90      90   100%
+lib/s21_matrix_base.c                         30      30   100%
+lib/s21_matrix_comparison.c                   16      16   100%
+lib/s21_matrix_inherent.c                     78      78   100%
+lib/s21_matrix_supplementary.c               140     140   100%
+------------------------------------------------------------------------------
+TOTAL                                        354     354   100%
+------------------------------------------------------------------------------
