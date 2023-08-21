@@ -1,0 +1,130 @@
+#include "test_utils.h"
+
+#include <stdlib.h>
+
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "s21_comparison_defines.h"
+
+
+#suite calc_complements
+#test sample
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = 3;
+  const int cols = 3;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){1, 2, 3};
+  m.matrix[1] = (double[]){0, 4, 2};
+  m.matrix[2] = (double[]){5, 2, 1};
+  matrix_t exp;
+  rc = s21_create_matrix(rows, cols, &exp);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&exp);
+  exp.matrix[0] = (double[]){0, 10, -20};
+  exp.matrix[1] = (double[]){4, -14, 8};
+  exp.matrix[2] = (double[]){-8, -2, 4};
+
+  matrix_t res;
+  rc = s21_calc_complements(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(s21_eq_matrix(&exp, &res), SUCCESS);
+
+  free(m.matrix);
+  free(exp.matrix);
+  s21_remove_matrix(&res);
+
+
+#test not_square
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = rand() % 100 + 1;
+  const int cols = rows + 1;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  matrix_t res;
+  rc = s21_calc_complements(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX);
+  
+  s21_remove_matrix(&m);
+
+
+#test malloc_failed
+  // should be square
+  const int side_len = rand() % 10 + 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  fill_matrix_with_rand(&m);
+
+  m.matrix[0][0] = 117; // special value for malloc failure
+  matrix_t res;
+  rc = s21_calc_complements(&m, &res);
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+  s21_remove_matrix(&m);
+
+
+#test malloc_failed_in_minors_func
+  // should be square
+  const int side_len = rand() % 100 + 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  int rc = RC_OK;
+  matrix_t m;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  fill_matrix_with_rand(&m);
+
+  m.matrix[0][0] = 117; // special value for malloc failure
+  matrix_t res;
+  rc = s21_calc_complements(&m, &res);
+  ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix
+  matrix_t res;
+  
+  int rc = s21_calc_complements(NULL, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_result
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  matrix_t m;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  rc = s21_calc_complements(&m, NULL);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  matrix_t m;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_2d_array(&m);
+  
+  matrix_t res;
+  rc = s21_calc_complements(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);

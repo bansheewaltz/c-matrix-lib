@@ -1,0 +1,155 @@
+#include "test_utils.h"
+
+#include <stdlib.h>
+#include <stdbool.h>
+
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+
+
+#suite is_singular
+#test specific_false
+  // should be square
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = 3;
+  const int cols = 3;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){2,  5,  7};
+  m.matrix[1] = (double[]){6,  3,  4};
+  m.matrix[2] = (double[]){5, -2, -3};
+  bool exp = false;
+
+  bool res;
+  double res_det;
+  rc = s21_is_singular(&m, &res, &res_det);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(res, exp);
+
+  free(m.matrix);
+
+
+#test specific_diagonal_false
+  // should be square
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = 3;
+  const int cols = 3;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){2, 0,  0};
+  m.matrix[1] = (double[]){0, 3,  0};
+  m.matrix[2] = (double[]){0, 0, -3};
+  bool exp = false;
+
+  bool res;
+  double res_det;
+  rc = s21_is_singular(&m, &res, &res_det);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(res, exp);
+
+  free(m.matrix);
+
+
+#test specific_diagonal_true
+  // should be square
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = 3;
+  const int cols = 3;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){2, 0,  0};
+  m.matrix[1] = (double[]){0, 0,  0};
+  m.matrix[2] = (double[]){0, 0, -3};
+  bool exp = true;
+
+  bool res;
+  double res_det;
+  rc = s21_is_singular(&m, &res, &res_det);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(res, exp);
+
+  free(m.matrix);
+
+
+#test generic_not_square
+  matrix_t m;
+  const int rows = rand() % 10 + 1;
+  const int cols = rows + 1;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  bool res;
+  double res_det;
+  rc = s21_is_singular(&m, &res, &res_det);
+  
+  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix
+  bool res;
+  double res_det;
+  int rc = s21_is_singular(NULL, &res, &res_det);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_result
+  matrix_t m;
+  const int rows = rand() % 10 + 1;
+  const int cols = rand() % 10 + 1;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  double res_det;
+  rc = s21_is_singular(&m, NULL, &res_det);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_result_determinant
+  matrix_t m;
+  const int rows = rand() % 10 + 1;
+  const int cols = rand() % 10 + 1;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  bool res;
+  rc = s21_is_singular(&m, &res, NULL);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  matrix_t m;
+  const int rows = rand() % 10 + 1;
+  const int cols = rand() % 10 + 1;
+  int rc = RC_OK;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  cleanup_matrix_2d_array(&m);
+  bool res;
+  double res_det;
+  rc = s21_is_singular(&m, &res, &res_det);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  free(m.matrix);

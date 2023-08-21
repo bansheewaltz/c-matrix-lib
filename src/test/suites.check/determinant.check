@@ -1,0 +1,127 @@
+#include "test_utils.h"
+
+#include <stdlib.h>
+
+#include "s21_matrix.h"
+#include "s21_matrix_supplementary.h"
+#include "s21_comparison_defines.h"
+
+
+#suite determinant
+#test sample
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = 3;
+  const int cols = 3;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){1, 2, 3};
+  m.matrix[1] = (double[]){4, 5, 6};
+  m.matrix[2] = (double[]){7, 8, 9};
+  double exp = 0.0;
+  
+  double res;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_ldouble_eq_tol(exp, res, 1e-06);
+
+  free(m.matrix);
+
+
+#test diagonal_matrix
+  int rc = RC_OK;
+  matrix_t m;
+  // should be square
+  const int side_len = rand() % 100 + 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  double exp = 1.0;
+  for (int i = 0; i < side_len; i++)
+    exp *= m.matrix[i][i];
+  
+  double res;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_ldouble_eq_tol(exp, res, 1e-06);
+
+  s21_remove_matrix(&m);
+
+
+#test not_square
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  
+  double res;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_CALCULATIONS_CANNOT_BE_PERFORMED);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix
+  double res;
+  int rc = s21_determinant(NULL, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+
+#test nullpointer_result
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  rc = s21_determinant(&m, NULL);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  s21_remove_matrix(&m);
+
+
+#test nullpointer_matrix_2d_array
+  int rc = RC_OK;
+  matrix_t m;
+  const int rows = rand() % 100 + 1;
+  const int cols = rand() % 100 + 1;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+
+  cleanup_matrix_2d_array(&m);
+  double res;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_NULL_POINTER_INPUT);
+
+  free(m.matrix);
+
+
+#test sidelen_eq_one
+  int rc = RC_OK;
+  matrix_t m;
+  // should be square
+  const int side_len = 1;
+  const int rows = side_len;
+  const int cols = side_len;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  double exp = m.matrix[0][0];
+
+  double res;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_ldouble_eq_tol(exp, res, 1e-06);
+
+  s21_remove_matrix(&m);
