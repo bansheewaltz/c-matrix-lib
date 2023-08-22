@@ -49,7 +49,7 @@
   matrix_t res;
   rc = s21_calc_complements(&m, &res);
   
-  ck_assert_int_eq(rc, RC_INCORRECT_MATRIX);
+  ck_assert_int_eq(rc, RC_CALCULATIONS_CANNOT_BE_PERFORMED);
   
   s21_remove_matrix(&m);
 

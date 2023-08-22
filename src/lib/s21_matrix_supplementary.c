@@ -65,7 +65,7 @@ int s21_is_singular(matrix_t *A, bool *result, double *res_det) {
     return RC_NULL_POINTER_INPUT;
   }
   if (!s21_is_square(A)) {
-    return RC_INCORRECT_MATRIX;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
   if (s21_is_diagonal(A)) {
@@ -141,7 +141,7 @@ int s21_calc_minors(matrix_t *A, matrix_t *result) {
     return RC_NULL_POINTER_INPUT;
   }
   if (!s21_is_square(A)) {
-    return RC_INCORRECT_MATRIX;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
   int rc = RC_OK;
@@ -189,7 +189,7 @@ int s21_adjugate(matrix_t *A, matrix_t *result) {
     return RC_NULL_POINTER_INPUT;
   }
   if (!s21_is_square(A)) {
-    return RC_INCORRECT_MATRIX;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
   int rc = RC_OK;
   matrix_t cofactor;

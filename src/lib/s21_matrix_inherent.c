@@ -82,7 +82,7 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
     return RC_NULL_POINTER_INPUT;
   }
   if (!s21_is_square(A)) {
-    return RC_INCORRECT_MATRIX;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
   int rc = RC_OK;
@@ -112,7 +112,7 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     return RC_NULL_POINTER_INPUT;
   }
   if (!s21_is_square(A)) {
-    return RC_INCORRECT_MATRIX;
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
   int rc = RC_OK;
@@ -120,8 +120,9 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
   bool is_invertible = false;
   double determinant = 0.0;
   (void)s21_is_invertible(A, &is_invertible, &determinant);  // all checks are
-  if (is_invertible == false)                                // made
-    return RC_INCORRECT_MATRIX;
+  if (is_invertible == false) {                              // made
+    return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
+  }
 
   if (s21_matrix_size(A) == 1) {
     rc = s21_create_matrix(1, 1, result);
