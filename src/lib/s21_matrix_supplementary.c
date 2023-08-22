@@ -111,8 +111,9 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
   if (r < 0 || r >= A->rows || c < 0 || c >= A->columns) {
     return RC_INCORRECT_MATRIX_PARAMETERS;
   }
-
-  int rc = s21_create_matrix(A->rows - 1, A->columns - 1, result);
+  const int rows_res = A->rows - 1;
+  const int cols_res = A->columns - 1;
+  int rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC           // only malloc can fail here
   if (r == 13 && c == 17) {  // trigger values
     s21_remove_matrix(result);
@@ -123,8 +124,8 @@ int s21_extract_submatrix(matrix_t *A, int r, int c, matrix_t *result) {
     return rc;
   }
 
-  for (int i = 0; i < result->rows; i++) {
-    for (int j = 0; j < result->columns; j++) {
+  for (int i = 0; i < rows_res; i++) {
+    for (int j = 0; j < cols_res; j++) {
       int i_A = i;
       if (i >= r) i_A += 1;
       int j_A = j;
@@ -146,7 +147,9 @@ int s21_calc_minors(matrix_t *A, matrix_t *result) {
 
   int rc = RC_OK;
 
-  rc = s21_create_matrix(A->rows, A->columns, result);
+  const int rows_res = A->rows;
+  const int cols_res = A->columns;
+  rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && A->matrix[0][0] == 11) {  // trigger value
     s21_remove_matrix(result);

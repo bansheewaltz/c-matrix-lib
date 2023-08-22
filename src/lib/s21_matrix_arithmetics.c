@@ -9,7 +9,9 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
-  int rc = s21_create_matrix(A->rows, A->columns, result);
+  const int rows_res = A->rows;
+  const int cols_res = A->columns;
+  int rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && A->rows == 11 && A->columns == 13) {  // trigger value
     s21_remove_matrix(result);
@@ -20,8 +22,8 @@ int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return rc;
   }
 
-  for (int i = 0; i < result->rows; i++) {
-    for (int j = 0; j < result->columns; j++) {
+  for (int i = 0; i < rows_res; i++) {
+    for (int j = 0; j < cols_res; j++) {
       result->matrix[i][j] = A->matrix[i][j] + B->matrix[i][j];
     }
   }
@@ -37,7 +39,9 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
-  int rc = s21_create_matrix(A->rows, A->columns, result);
+  const int rows_res = A->rows;
+  const int cols_res = A->columns;
+  int rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && A->rows == 11 && A->columns == 13) {  // trigger value
     s21_remove_matrix(result);
@@ -48,8 +52,8 @@ int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return rc;
   }
 
-  for (int i = 0; i < result->rows; i++) {
-    for (int j = 0; j < result->columns; j++) {
+  for (int i = 0; i < rows_res; i++) {
+    for (int j = 0; j < cols_res; j++) {
       result->matrix[i][j] = A->matrix[i][j] - B->matrix[i][j];
     }
   }
@@ -62,7 +66,9 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
     return RC_NULL_POINTER_INPUT;
   }
 
-  int rc = s21_create_matrix(A->rows, A->columns, result);
+  const int rows_res = A->rows;
+  const int cols_res = A->columns;
+  int rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && number == 1.0 / 16) {  // trigger value
     s21_remove_matrix(result);
@@ -73,8 +79,8 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
     return rc;
   }
 
-  for (int i = 0; i < result->rows; i++) {
-    for (int j = 0; j < result->columns; j++) {
+  for (int i = 0; i < rows_res; i++) {
+    for (int j = 0; j < cols_res; j++) {
       result->matrix[i][j] = A->matrix[i][j] * number;
     }
   }
@@ -90,7 +96,9 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
 
-  int rc = s21_create_matrix(A->rows, B->columns, result);
+  const int rows_res = A->rows;
+  const int cols_res = B->columns;
+  int rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && A->matrix[0][0] == 5 && B->matrix[0][0] == 7) {
     s21_remove_matrix(result);
@@ -101,8 +109,8 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
     return rc;
   }
 
-  for (int i = 0; i < A->rows; i++) {
-    for (int j = 0; j < B->columns; j++) {
+  for (int i = 0; i < rows_res; i++) {
+    for (int j = 0; j < cols_res; j++) {
       double sum = 0;
       for (int k = 0; k < B->rows; k++) {
         sum += A->matrix[i][k] * B->matrix[k][j];

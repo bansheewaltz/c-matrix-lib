@@ -9,9 +9,9 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
   if (A == NULL || A->matrix == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
   }
-  const int rows_t = A->columns;
-  const int cols_t = A->rows;
-  int rc = s21_create_matrix(rows_t, cols_t, result);
+  const int rows_res = A->columns;
+  const int cols_res = A->rows;
+  int rc = s21_create_matrix(rows_res, cols_res, result);
 #ifdef TEST_MALLOC
   if (rc == RC_OK && A->matrix[0][0] == 13) {  // trigger value
     s21_remove_matrix(result);
@@ -21,8 +21,8 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
   if (rc != RC_OK) {
     return rc;
   }
-  for (int i = 0; i < result->rows; i++) {
-    for (int j = 0; j < result->columns; j++) {
+  for (int i = 0; i < rows_res; i++) {
+    for (int j = 0; j < cols_res; j++) {
       result->matrix[i][j] = A->matrix[j][i];
     }
   }
@@ -37,8 +37,7 @@ int s21_determinant(matrix_t *A, double *result) {
   if (!s21_is_square(A)) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
-
-  const int side_len = A->columns;
+  const int side_len = A->rows;
 
   if (side_len == 1) {
     *result = A->matrix[0][0];
@@ -84,6 +83,7 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   if (!s21_is_square(A)) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
+  const int side_len = A->rows;
 
   int rc = RC_OK;
 
@@ -99,7 +99,7 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   }
 
   // Hadamard multiplication
-  int matrix_size = A->rows * A->rows;
+  int matrix_size = side_len * side_len;
   for (int i = 1; i < matrix_size; i += 2) {
     result->matrix[i / A->rows][i % A->columns] *= -1;
   }
