@@ -1,6 +1,8 @@
 #ifndef S21_MATRIX_H_
 #define S21_MATRIX_H_
 
+#define MTX_ACCURACY 1e-6
+
 enum return_codes {
   RC_OK = 0,
   RC_INCORRECT_MATRIX_PARAMETERS = 1,

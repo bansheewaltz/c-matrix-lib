@@ -1,5 +1,6 @@
 #include "s21_matrix_supplementary.h"
 
+#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
 #ifdef TEST_MALLOC
@@ -79,7 +80,8 @@ int s21_is_singular(matrix_t *A, bool *result, double *res_det) {
 
   // regular square matrix case
   (void)s21_determinant(A, res_det);  // all checks are made
-  *result = (*res_det == 0.0);
+  bool is_det_eq_zero = fabs(*res_det) < MTX_ACCURACY;
+  *result = is_det_eq_zero;
 
   return RC_OK;
 }
