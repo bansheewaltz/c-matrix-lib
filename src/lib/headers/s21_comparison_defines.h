@@ -3,6 +3,6 @@
 
 #define SUCCESS 1
 #define FAILURE 0
-#define EPS_EQ 1e-7
+#define MTX_EQ_ACCURACY 1e-7
 
 #endif  // S21_COMPARISON_DEFINES_H_

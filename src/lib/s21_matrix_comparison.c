@@ -17,7 +17,7 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
   for (int i = 0; i < rows; i++) {
     for (int j = 0; j < cols; j++) {
       double error = fabs(A->matrix[i][j] - B->matrix[i][j]);
-      if (error > EPS_EQ) {
+      if (error > MTX_EQ_ACCURACY) {
         return FAILURE;
       }
     }
