@@ -31,7 +31,7 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
 // through permutations
 int s21_determinant(matrix_t *A, double *result) {
-  if (A == NULL || A->matrix == NULL || result == NULL) {
+  if (A == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
   }
   if (!s21_is_square(A)) {
@@ -39,6 +39,13 @@ int s21_determinant(matrix_t *A, double *result) {
   }
   const int side_len = A->rows;
 
+  if (side_len == 0) {
+    *result = 1;
+    return RC_OK;
+  }
+  if (A->matrix == NULL) {
+    return RC_NULL_POINTER_INPUT;
+  }
   if (side_len == 1) {
     *result = A->matrix[0][0];
     return RC_OK;
@@ -86,6 +93,15 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   const int side_len = A->rows;
 
   int rc = RC_OK;
+
+  if (side_len == 1) {
+    rc = s21_create_matrix(1, 1, result);
+    if (rc != RC_OK) {
+      return rc;
+    }
+    result->matrix[0][0] = 1;
+    return RC_OK;
+  }
 
   rc = s21_calc_minors(A, result);
 #ifdef TEST_MALLOC

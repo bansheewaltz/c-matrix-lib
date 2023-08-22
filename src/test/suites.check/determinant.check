@@ -8,7 +8,7 @@
 
 
 #suite determinant
-#test sample
+#test sample_3by3
   int rc = RC_OK;
   matrix_t m;
   const int rows = 3;
@@ -93,8 +93,10 @@
 #test nullpointer_matrix_2d_array
   int rc = RC_OK;
   matrix_t m;
-  const int rows = rand() % 100 + 1;
-  const int cols = rand() % 100 + 1;
+  // should be square
+  const int side_len = rand() % 100 + 1;
+  const int rows = side_len;
+  const int cols = side_len;
   rc = s21_create_matrix(rows, cols, &m);
   ck_assert_int_eq(rc, RC_OK);
 
@@ -107,7 +109,7 @@
   free(m.matrix);
 
 
-#test sidelen_eq_one
+#test one_by_one_matrix
   int rc = RC_OK;
   matrix_t m;
   // should be square
@@ -116,7 +118,23 @@
   const int cols = side_len;
   rc = s21_create_matrix(rows, cols, &m);
   ck_assert_int_eq(rc, RC_OK);
+  m.matrix[0][0] = get_rand_double(DBL_MIN, DBL_MAX);
   double exp = m.matrix[0][0];
+
+  double res;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_ldouble_eq_tol(exp, res, 1e-06);
+
+  s21_remove_matrix(&m);
+
+
+#test zero_by_zero_matrix
+  int rc = RC_OK;
+  matrix_t m = {0};
+  // should be square
+  double exp = 1.0;
 
   double res;
   rc = s21_determinant(&m, &res);

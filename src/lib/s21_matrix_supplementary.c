@@ -146,8 +146,18 @@ int s21_calc_minors(matrix_t *A, matrix_t *result) {
   if (!s21_is_square(A)) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
+  const int side_len = A->rows;
 
   int rc = RC_OK;
+
+  if (side_len == 1) {
+    rc = s21_create_matrix(1, 1, result);
+    if (rc != RC_OK) {
+      return rc;
+    }
+    result->matrix[0][0] = 1;
+    return RC_OK;
+  }
 
   const int rows_res = A->rows;
   const int cols_res = A->columns;
@@ -196,7 +206,19 @@ int s21_adjugate(matrix_t *A, matrix_t *result) {
   if (!s21_is_square(A)) {
     return RC_CALCULATIONS_CANNOT_BE_PERFORMED;
   }
+  const int side_len = A->rows;
+
   int rc = RC_OK;
+
+  if (side_len == 1) {
+    rc = s21_create_matrix(1, 1, result);
+    if (rc != RC_OK) {
+      return rc;
+    }
+    result->matrix[0][0] = 1;
+    return RC_OK;
+  }
+
   matrix_t cofactor;
   rc = s21_calc_complements(A, &cofactor);
 #ifdef TEST_MALLOC
