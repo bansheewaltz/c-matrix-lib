@@ -7,7 +7,7 @@
 #include "s21_comparison_defines.h"
 
 
-#suite calc_adjugate
+#suite adjugate
 #test sample
   int rc = RC_OK;
   matrix_t m;
