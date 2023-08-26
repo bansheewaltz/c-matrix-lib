@@ -109,7 +109,7 @@
   free(m.matrix);
 
 
-#test one_by_one_matrix
+#test matrix_1x1
   int rc = RC_OK;
   matrix_t m;
   // should be square
@@ -130,7 +130,7 @@
   s21_remove_matrix(&m);
 
 
-#test zero_by_zero_matrix
+#test matrix_0x0
   int rc = RC_OK;
   matrix_t m = {0};
   // should be square
@@ -143,3 +143,28 @@
   ck_assert_ldouble_eq_tol(exp, res, 1e-06);
 
   s21_remove_matrix(&m);
+
+
+#test matrix_5x5
+  int rc = RC_OK;
+  matrix_t m;
+  const int side_len = 5;
+  const int rows = side_len;
+  const int cols = side_len;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){ 0,  6,  -2, -1,  5};
+  m.matrix[1] = (double[]){ 0,  0,   0, -9, -7};
+  m.matrix[2] = (double[]){ 0, 15,  35,  0,  0};  
+  m.matrix[3] = (double[]){ 0, -1, -11, -2,  1};  
+  m.matrix[4] = (double[]){-2, -2,   3,  0, -2};  
+  double exp = 2480;
+  
+  double res = 0;
+  rc = s21_determinant(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_double_eq_tol(res, exp, 1e-6);
+
+  free(m.matrix);

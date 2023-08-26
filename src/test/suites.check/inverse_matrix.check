@@ -238,3 +238,38 @@
   ck_assert_int_eq(rc, RC_MEMORY_ALLOCATION_FAILED);
 
   free(m.matrix);
+
+
+#test matrix_5x5
+  int rc = RC_OK;
+  matrix_t m;
+  const int side_len = 5;
+  const int rows = side_len;
+  const int cols = side_len;
+  rc = s21_create_matrix(rows, cols, &m);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&m);
+  m.matrix[0] = (double[]){ 18, 14,  5, 15, 19};
+  m.matrix[1] = (double[]){  1,  7,  3, 15,  4};
+  m.matrix[2] = (double[]){ 18, 16,  4,  2, 11};  
+  m.matrix[3] = (double[]){  3,  7,  2,  0,  5};  
+  m.matrix[4] = (double[]){  2,  3, 15, 14, 20};  
+  matrix_t exp;
+  rc = s21_create_matrix(rows, cols, &exp);
+  ck_assert_int_eq(rc, RC_OK);
+  cleanup_matrix_rows_arrays(&exp);
+  exp.matrix[0] = (double[]){   -981.0/146426, -1559.0/146426,  6935.0/73213, -28499.0/146426,   370.0/73213};
+  exp.matrix[1] = (double[]){  -4565.0/146426,  7373.0/146426,   404.0/73213,  22167.0/146426, -1562.0/73213};
+  exp.matrix[2] = (double[]){ -22591.0/146426,  7683.0/146426, 12456.0/73213, -24763.0/146426,  6207.0/73213};  
+  exp.matrix[3] = (double[]){     349.0/20918,   1173.0/20918,   -79.0/10459,   -1461.0/20918,   -57.0/10459};  
+  exp.matrix[4] = (double[]){    1144.0/10459,   -890.0/10459, -1387.0/10459,    1804.0/10459,   -74.0/10459};  
+
+  matrix_t res;
+  rc = s21_inverse_matrix(&m, &res);
+  
+  ck_assert_int_eq(rc, RC_OK);
+  ck_assert_int_eq(s21_eq_matrix(&exp, &res), SUCCESS);
+
+  free(m.matrix);
+  free(exp.matrix);
+  s21_remove_matrix(&res);
