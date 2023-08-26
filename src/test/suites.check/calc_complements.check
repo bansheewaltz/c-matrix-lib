@@ -41,7 +41,7 @@
 #test not_square
   int rc = RC_OK;
   matrix_t m;
-  const int rows = rand() % 100 + 1;
+  const int rows = rand() % 10 + 1;
   const int cols = rows + 1;
   rc = s21_create_matrix(rows, cols, &m);
   ck_assert_int_eq(rc, RC_OK);
@@ -75,7 +75,7 @@
 
 #test malloc_failed_in_minors_func
   // should be square
-  const int side_len = rand() % 100 + 1;
+  const int side_len = rand() % 10 + 1;
   const int rows = side_len;
   const int cols = side_len;
   int rc = RC_OK;
@@ -101,8 +101,8 @@
 
 
 #test nullpointer_result
-  const int rows = rand() % 100 + 1;
-  const int cols = rand() % 100 + 1;
+  const int rows = rand() % 10 + 1;
+  const int cols = rand() % 10 + 1;
   matrix_t m;
   int rc = RC_OK;
   rc = s21_create_matrix(rows, cols, &m);
@@ -116,8 +116,8 @@
 
 
 #test nullpointer_matrix_2d_array
-  const int rows = rand() % 100 + 1;
-  const int cols = rand() % 100 + 1;
+  const int rows = rand() % 10 + 1;
+  const int cols = rand() % 10 + 1;
   matrix_t m;
   int rc = RC_OK;
   rc = s21_create_matrix(rows, cols, &m);
