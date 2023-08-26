@@ -30,7 +30,7 @@
       }
     }
   }
-  out_loop:
+  out_loop:;
   bool res = s21_is_diagonal(&m);
 
   ck_assert_int_eq(exp, res);

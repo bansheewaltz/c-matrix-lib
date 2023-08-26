@@ -34,7 +34,7 @@
       }
     }
   }
-  out_loop:
+  out_loop:;
 
   bool exp = true;
   ck_assert_int_eq(res, exp);

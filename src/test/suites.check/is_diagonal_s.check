@@ -31,7 +31,7 @@
       }
     }
   }
-  out_loop:
+  out_loop:;
   bool res;
   rc = s21_is_diagonal_s(&m, &res);
   
