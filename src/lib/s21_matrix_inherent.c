@@ -29,7 +29,6 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
   return RC_OK;
 }
 
-// through permutations
 int s21_determinant(matrix_t *A, double *result) {
   if (A == NULL || result == NULL) {
     return RC_NULL_POINTER_INPUT;
@@ -64,20 +63,26 @@ int s21_determinant(matrix_t *A, double *result) {
     return RC_OK;
   }
 
-  // permutations method for a general case of a square matrix
-  double pos_diagonal_sum = 0.0;
-  double neg_diagonal_sum = 0.0;
-  for (int i = 0; i < A->columns; i++) {
-    double pos_diagonal = 1.0;
-    double neg_diagonal = 1.0;
-    for (int j = 0; j < side_len; j++) {
-      pos_diagonal *= A->matrix[j][(i + j) % side_len];
-      neg_diagonal *= A->matrix[j][((i - j) % side_len + side_len) % side_len];
+  // general case of a square matrix
+  double det = 0.0;
+  int sign = 1;
+  for (int i = 0; i < side_len; i++) {
+    matrix_t subm;
+    int rc = RC_OK;
+    rc = s21_extract_submatrix(A, 0, i, &subm);
+    if (rc != RC_OK) {
+      return rc;
     }
-    pos_diagonal_sum += pos_diagonal;
-    neg_diagonal_sum += neg_diagonal;
+    double subm_det;
+    rc = s21_determinant(&subm, &subm_det);
+    if (rc != RC_OK) {
+      return rc;
+    }
+    s21_remove_matrix(&subm);
+    det += A->matrix[0][i] * subm_det * sign;
+    sign = -sign;
   }
-  *result = pos_diagonal_sum - neg_diagonal_sum;
+  *result = det;
   return RC_OK;
 }
 
