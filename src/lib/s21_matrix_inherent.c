@@ -120,9 +120,11 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
   }
 
   // Hadamard multiplication
-  int matrix_size = side_len * side_len;
-  for (int i = 1; i < matrix_size; i += 2) {
-    result->matrix[i / A->rows][i % A->columns] *= -1;
+  for (int i = 0; i < result->rows; i++) {
+    for (int j = 0; j < result->columns; j++) {
+      if ((i + j) % 2 == 0) continue;
+      result->matrix[i][j] *= -1;
+    }
   }
 
   return RC_OK;
